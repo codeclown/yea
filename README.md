@@ -1,6 +1,6 @@
 # supreme-ajax
 
-> AJAX library for those who like immutability.
+> Browser AJAX library for those who like immutability.
 
 
 ## Principles
@@ -11,6 +11,7 @@
 - Understands Content-Type
   - Decodes JSON responses by default
 - Works on modern browsers
+  - No external dependencies
   - See [polyfills](#polyfills) for a list of polyfills you might need for older browsers
 
 
@@ -24,12 +25,12 @@ npm install supreme-ajax
 yarn add supreme-ajax
 ```
 
-Import in a project
+Import in a project:
 
 ```js
-import { request } from 'supreme-ajax';
+import request from 'supreme-ajax';
 // or
-const { request } = require('supreme-ajax');
+const request} = require('supreme-ajax');
 ```
 
 
@@ -43,6 +44,12 @@ request
   .get('https://example.com')
   .query({ foo: 'bar' })
   .send()
+  .then(response => {
+    // ...
+  })
+  .catch(error => {
+    // ...
+  })
 
 // Make a POST request
 request
@@ -79,6 +86,12 @@ request
   })
   .send()
 
+// Set a timeout
+request
+  .get('https://example.com')
+  .timeout(2000)
+  .send()
+
 // JSON is decoded automatically based on Content-Type header of the response (can be turned off)
 request
   .get('https://example.com/accounts.json')
@@ -106,6 +119,7 @@ const req1 = request
   .get('https://example.com')
   .query({ foo: 'bar' });
 
+// Extend from previous request
 const req2 = req1.query({ something: 'different' });
 
 console.log(req2 === req1); // => false
@@ -119,31 +133,25 @@ Practical example of how to create a base request with some defaults and later u
 const api = request
   .baseUrl('https://example.com/api/v1')
   .headers({
-    'X-API-KEY': '...'
+    'X-API-KEY': 'secret123'
   });
 
-// All these requests will utilize the base URL and headers set above
-api.get('/accounts');
-api.post('/accounts').body(data);
+// All these requests will have the base URL and headers set above
+api.get('/accounts').send();
+api.post('/accounts').body(data).send();
 ```
 
 
-## Don't access or alter directly
+## Inspect request config
 
-Never access or alter any properties of an `ImmutableAjaxRequest` instance directly. Instead use the provided API methods.
+Use the API methods `toObject`, `config` or `debug` to inspect the configuration of an `ImmutableAjaxRequest` instance.
 
 ```js
 const req = request.get('https://example.com');
-
-// Don't do this! Never access or alter any properties without using the API methods.
-req.config.query = { /* ... */ };
-
-// Do this:
-req.query({ foo: 'bar' }); // returns a new ImmutableAjaxRequest
-
-// Or to inspect values:
-console.log(req.toObject().query);
+console.log(req.toObject().url);
 ```
+
+See [`toObject`](#toobject).
 
 
 ## API
@@ -196,9 +204,10 @@ Sets the base URL to which all subsequent request URLs will be appended.
 
 Where `url` is a string, e.g. `'https://example.com'`.
 
-Forward-slashes will be normalized automatically. All of the following result in request URL `'https://example.com/accounts'`:
+Forward-slashes are normalized automatically:
 
 ```js
+// All of these will result in URL 'https://example.com/accounts'
 request.baseUrl('https://example.com').url('accounts')
 request.baseUrl('https://example.com/').url('accounts')
 request.baseUrl('https://example.com').url('/accounts')
@@ -207,7 +216,7 @@ request.baseUrl('https://example.com/').url('/accounts')
 
 ### query
 
-Sets query parameters from an object. Overwrites existing query (all query parameters not present in the object are cleared).
+Sets query parameters from an object. Overwrites existing query.
 
 ```js
 .query(object)
@@ -217,7 +226,7 @@ Where `object` is key-value object of query parameters to set. Will be encoded u
 
 ### headers
 
-Sets request headers from an object. Overwrites existing headers (all headers parameters not present in the object are 
+Sets request headers from an object. Overwrites existing headers.
 
 ```js
 .headers(object)
@@ -246,6 +255,23 @@ Example:
 
 ```js
 const req = request.headers({ first: 'example' }).amendHeaders({ second: 'example' });
+console.log(req.toObject().headers) // => { first: 'example', second: 'example' }
+```
+
+### header
+
+Adds or updates a header value.
+
+```js
+.header(key, value)
+```
+
+Where `key` is a string and `value` is a string.
+
+Example:
+
+```js
+const req = request.headers({ first: 'example' }).header('second', 'example');
 console.log(req.toObject().headers) // => { first: 'example', second: 'example' }
 ```
 
@@ -342,7 +368,7 @@ request
   })
   .catch(error => {
     console.log(error.message);
-    console.log(error.response); // Similar structure as response in then
+    console.log(error.response); // Similar structure as successful response
   })
 ```
 
@@ -350,8 +376,12 @@ A new `Promise` is always returned, and the `ImmutableAjaxRequest` is not mutate
 
 ```js
 const req = request.get('https://example.com');
-req.send().then(() => {});
-req.send().then(() => {});
+req.send().then(response => {
+  console.log('first response', response);
+});
+req.send().then(() => {
+  console.log('second response', response);
+});
 ```
 
 See [`polyfills`](#polyfills) for switching away from global `Promise` (e.g. bluebird).
@@ -366,11 +396,10 @@ Using this method you can remove the default transformer:
 .setResponseTransformers([])
 ```
 
-If you need to add it back, just import it and set again:
+If you need to add it back, just set it again:
 
 ```js
-import { jsonResponseTransformer } from 'supreme-ajax';
-request.setResponseTransformers([ jsonResponseTransformer ]);
+request.setResponseTransformers([ request.jsonResponseTransformer ]);
 ```
 
 Transformer functions are executed sequentially in the order they are in the list, and they receive `response` as the only parameter. Whatever value they return is passed onto the next transformer and eventually back to the Promise-chain.
@@ -411,7 +440,7 @@ request.polyfills({
 })
 ```
 
-Links to polyfills for older browsers if you need to support them:
+Links to polyfills for older browsers if you need to support them (these automatically patch `window.Promise` and `window.URLSearchParams`; no need to use `request.polyfills`):
 
 - [es6-promise](https://github.com/stefanpenner/es6-promise)
 - [url-search-params](https://github.com/WebReflection/url-search-params)
@@ -422,6 +451,29 @@ Returns the request configuration as an object.
 
 ```js
 .toObject()
+.config() // alias
+.debug() // alias
+```
+
+Example:
+
+```js
+const req = request.baseUrl('http://example.com').get('/info').header('X-Random', 'foo')
+const config = req.toObject(); // or req.config() or req.debug()
+// =>
+// {
+//   method: 'GET',
+//   url: 'http://example.com/info',
+//   body: '',
+//   headers: {
+//     'X-Random': 'foo'
+//   },
+//   allowedStatusCode: /^2[0-9]{2}$/,
+//   timeout: null,
+//   responseTransformers: [
+//     req.jsonResponseTransformer
+//   ],
+// }
 ```
 
 
