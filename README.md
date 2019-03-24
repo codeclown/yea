@@ -2,6 +2,8 @@
 
 > Immutable-style AJAX library for the browser
 
+[![Build Status](https://travis-ci.org/codeclown/supreme-ajax.svg?branch=master)](https://travis-ci.org/codeclown/supreme-ajax)
+
 
 ## Principles
 
