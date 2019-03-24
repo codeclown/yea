@@ -13,6 +13,7 @@
 - Works on modern browsers
   - No external dependencies
   - See [polyfills](#polyfills) for a list of polyfills you might need for older browsers
+- [Fully tested](/test/specs)
 
 
 ## Installation
@@ -30,7 +31,7 @@ Import in a project:
 ```js
 import request from 'supreme-ajax';
 // or
-const request} = require('supreme-ajax');
+const request = require('supreme-ajax');
 ```
 
 
@@ -45,13 +46,19 @@ request
   .query({ foo: 'bar' })
   .send()
   .then(response => {
-    // ...
+    console.error(response.body);
   })
   .catch(error => {
-    // ...
+    console.error(error.response.status);
   })
 
 // Make a POST request
+request
+  .post('https://example.com/accounts')
+  .body('raw data')
+  .send()
+
+// Make a POST request (json)
 request
   .post('https://example.com/accounts')
   .json({ foo: 'bar' })
@@ -69,15 +76,6 @@ request
   .get('/accounts')
   .send()
 
-// Catch errors
-request
-  .get('https://example.com')
-  .query({ foo: 'bar' })
-  .send()
-  .catch(error => {
-    console.error(error.response.status);
-  })
-
 // Set headers
 request
   .get('https://example.com')
@@ -94,7 +92,7 @@ request
   .timeout(2000)
   .send()
 
-// JSON is decoded automatically based on Content-Type header of the response (can be turned off)
+// JSON responses decoded automatically based on Content-Type header (can be turned off)
 request
   .get('https://example.com/accounts.json')
   .send()
@@ -125,8 +123,8 @@ const req1 = request
 const req2 = req1.query({ something: 'different' });
 
 console.log(req2 === req1); // => false
-console.log(req1.toObject().query); // => { foo: 'bar' }
-console.log(req2.toObject().query); // => { something: 'different' }
+console.log(req1.toObject().query); // => 'foo=bar'
+console.log(req2.toObject().query); // => 'something=different'
 ```
 
 Practical example of how to create a base request with some defaults and later utilize it for requests:
@@ -138,7 +136,7 @@ const api = request
     'X-API-KEY': 'secret123'
   });
 
-// All these requests will have the base URL and headers set above
+// The following requests will use the base URL and headers set above
 api.get('/accounts').send();
 api.post('/accounts').body(data).send();
 ```
@@ -146,14 +144,12 @@ api.post('/accounts').body(data).send();
 
 ## Inspect request config
 
-Use the API methods `toObject`, `config` or `debug` to inspect the configuration of an `ImmutableAjaxRequest` instance.
+Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `ImmutableAjaxRequest` instance.
 
 ```js
 const req = request.get('https://example.com');
 console.log(req.toObject().url);
 ```
-
-See [`toObject`](#toobject).
 
 
 ## API
@@ -242,8 +238,11 @@ Where `object` is key-value object of headers to set.
 Example:
 
 ```js
-const req = request.headers({ first: 'example' }).headers({ second: 'example' });
-console.log(req.toObject().headers) // => { second: 'example' }
+const req = request.headers({ 'x-example': 'foo' });
+console.log(req.toObject().headers) // => { 'x-example': 'foo' }
+// Overwrites all previous headers:
+const req2 = req.headers({ 'x-token': 'secret123' });
+console.log(req2.toObject().headers) // => { 'x-token': 'secret123' }
 ```
 
 ### amendHeaders
@@ -259,8 +258,8 @@ Where `object` is key-value object of headers to set.
 Example:
 
 ```js
-const req = request.headers({ first: 'example' }).amendHeaders({ second: 'example' });
-console.log(req.toObject().headers) // => { first: 'example', second: 'example' }
+const req = request.headers({ 'x-example': 'foo' }).amendHeaders({ 'x-token': 'secret123' });
+console.log(req.toObject().headers) // => { 'x-example': 'foo', 'x-token': 'secret123' }
 ```
 
 ### header
@@ -276,8 +275,8 @@ Where `key` is a string and `value` is a string.
 Example:
 
 ```js
-const req = request.headers({ first: 'example' }).header('second', 'example');
-console.log(req.toObject().headers) // => { first: 'example', second: 'example' }
+const req = request.header('x-example', 'foo').header('x-token', 'secret123');
+console.log(req.toObject().headers) // => { 'x-example': 'foo', 'x-token': 'secret123' }
 ```
 
 ### unsetHeader
@@ -293,8 +292,8 @@ Where `name` is a string.
 Example:
 
 ```js
-const req = request.headers({ first: 'example', second: 'example' }).unsetHeader('first');
-console.log(req.toObject().headers) // => { second: 'example' }
+const req = request.headers({ 'x-example': 'foo', 'x-token': 'secret123' }).unsetHeader('x-example');
+console.log(req.toObject().headers) // => { 'x-token': 'secret123' }
 ```
 
 ### body
@@ -471,7 +470,7 @@ const config = req.toObject(); // or req.config() or req.debug()
 //   url: 'http://example.com/info',
 //   body: '',
 //   headers: {
-//     'X-Random': 'foo'
+//     'x-random': 'foo'
 //   },
 //   allowedStatusCode: /^2[0-9]{2}$/,
 //   timeout: null,
