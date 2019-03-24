@@ -15,8 +15,12 @@ app.get('/immutable-ajax.js', (req, res, next) => res.sendFile(path.join(__dirna
 app.use('/specs', express.static(path.join(__dirname, 'specs')));
 
 app.get('/simple-get', (req, res, next) => res.send('hello'));
+app.get('/nested/simple-get', (req, res, next) => res.send('nested hello'));
 app.get('/dump-headers', (req, res, next) => res.send(
   Object.keys(req.headers).sort().map(name => `${name}: ${req.headers[name]}`).join('\n')
+));
+app.get('/dump-query', (req, res, next) => res.send(
+  Object.keys(req.query).sort().map(key => `${key}: ${req.query[key]}`).join('\n')
 ));
 app.post('/validate-urlencoded-request', (req, res, next) => {
   if (req.headers['content-type'] !== 'application/x-www-form-urlencoded') {

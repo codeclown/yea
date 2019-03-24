@@ -84,6 +84,8 @@ request
   .headers({
     'X-Random': 1
   })
+  .header('x-another', 'test')
+  .unsetHeader('x-another')
   .send()
 
 // Set a timeout
@@ -204,14 +206,17 @@ Sets the base URL to which all subsequent request URLs will be appended.
 
 Where `url` is a string, e.g. `'https://example.com'`.
 
-Forward-slashes are normalized automatically:
+Refer to [`URL` documentation](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL#Examples) to see how `baseUrl` and `url` behave. A few examples:
 
 ```js
-// All of these will result in URL 'https://example.com/accounts'
-request.baseUrl('https://example.com').url('accounts')
-request.baseUrl('https://example.com/').url('accounts')
-request.baseUrl('https://example.com').url('/accounts')
-request.baseUrl('https://example.com/').url('/accounts')
+request.baseUrl('https://example.com').url('accounts')    // => https://example.com/accounts
+request.baseUrl('https://example.com/').url('accounts')   // => https://example.com/accounts
+request.baseUrl('https://example.com').url('/accounts')   // => https://example.com/accounts
+request.baseUrl('https://example.com/').url('/accounts')  // => https://example.com/accounts
+request.baseUrl('https://example.com/nested').url('accounts')      // => https://example.com/accounts
+request.baseUrl('https://example.com/nested').url('/accounts')     // => https://example.com/accounts
+request.baseUrl('https://example.com/nested/').url('accounts')     // => https://example.com/nested/accounts
+request.baseUrl('https://example.com/nested/foo').url('accounts')  // => https://example.com/nested/accounts
 ```
 
 ### query

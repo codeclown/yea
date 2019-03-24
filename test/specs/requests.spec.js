@@ -48,6 +48,75 @@ describe('Requests', () => {
       })
   );
 
+  it('uses baseUrl if set', () =>
+    request
+      .method('get')
+      .baseUrl('http://localhost:8080/nested/foo')
+      .url('simple-get')
+      .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('nested hello');
+      })
+  );
+
+  it('uses full URL if set, regardless of base URL', () =>
+    request
+      .method('get')
+      .baseUrl('http://localhost:8080/nested/')
+      .url('http://localhost:8080/simple-get')
+      .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('hello');
+      })
+  );
+
+  it('includes query string if set', () =>
+    request
+      .url('/dump-query')
+      .query({
+        hello: 'yes',
+        looking: 'me'
+      })
+      .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.contain('hello: yes\nlooking: me');
+      })
+  );
+
+  it('overrides query string via .query', () =>
+    request
+      .url('/dump-query?first=here')
+      .query({
+        hello: 'yes'
+      })
+      .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.contain('hello: yes');
+      })
+  );
+
+  it('overrides query string via .url', () =>
+    request
+      .query({
+        hello: 'yes'
+      })
+      .url('/dump-query?first=here')
+      .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.contain('first: here');
+      })
+  );
+
   it('sends urlencoded', () =>
     request
       .method('post')
@@ -81,8 +150,8 @@ describe('Requests', () => {
       .send()
       .then(response => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.be.a('object');
-        expect(response.body).to.deep.equal({ taker: 'believer' });
+        expect(response.data).to.be.a('object');
+        expect(response.data).to.deep.equal({ taker: 'believer' });
       })
   );
 
@@ -217,5 +286,14 @@ describe('Requests', () => {
       .send()
   ).slow(500);
 
-  it('allows setting Promise-implementation');
+  it('allows setting Promise-implementation', () => {
+    class MyPromise extends Promise {}
+    const promise = request
+      .method('get')
+      .url('/simple-get')
+      .polyfills({ Promise: MyPromise })
+      .send();
+    expect(promise).to.be.instanceOf(MyPromise);
+    return promise;
+  });
 });

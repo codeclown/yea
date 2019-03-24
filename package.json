@@ -1,4 +1,5 @@
 {
+  "main": "src/index.js",
   "devDependencies": {
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",

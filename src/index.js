@@ -4,6 +4,14 @@ function merge(base, object) {
   return _.merge({}, base, object);
 }
 
+function keys(object) {
+  var keys = [];
+  for (var key in object) {
+    keys.push(key);
+  }
+  return keys;
+}
+
 function jsonResponseTransformer(response) {
   if (response.headers['content-type'] && response.headers['content-type'].indexOf('application/json') === 0) {
     return merge(response, {
@@ -14,7 +22,8 @@ function jsonResponseTransformer(response) {
 }
 
 function ImmutableAjaxRequest(config) {
-  this.config = config;
+  this._config = config;
+  this.jsonResponseTransformer = jsonResponseTransformer;
 }
 
 ImmutableAjaxRequest.prototype.method = function method(method) {
@@ -22,18 +31,51 @@ ImmutableAjaxRequest.prototype.method = function method(method) {
   if (allowedMethods.indexOf(method) === -1) {
     throw new Error('Invalid method: ' + method)
   }
-  return new ImmutableAjaxRequest(merge(this.config, { method }));
+  return new ImmutableAjaxRequest(merge(this._config, { method }));
+};
+
+ImmutableAjaxRequest.prototype.get = function get(url) {
+  return this.method('get').url(url);
+};
+
+ImmutableAjaxRequest.prototype.post = function post(url) {
+  return this.method('post').url(url);
 };
 
 ImmutableAjaxRequest.prototype.url = function url(url) {
-  return new ImmutableAjaxRequest(merge(this.config, { url }));
+  var segments = url.split('?');
+  return new ImmutableAjaxRequest(merge(this._config, { url: segments[0], query: segments[1] || '' }));
+};
+
+ImmutableAjaxRequest.prototype.baseUrl = function baseUrl(baseUrl) {
+  if (baseUrl === null) {
+    baseUrl = '';
+  }
+  return new ImmutableAjaxRequest(merge(this._config, { baseUrl }));
+};
+
+ImmutableAjaxRequest.prototype.query = function query(query) {
+  if (typeof query !== 'string') {
+    var params = new URLSearchParams();
+    for (var key of keys(query).sort()) {
+      if (Array.isArray(query[key])) {
+        for (var item in query[key]) {
+          params.append(key, query[key][item]);
+        }
+      } else {
+        params.append(key, query[key]);
+      }
+    }
+    query = params.toString();
+  }
+  return new ImmutableAjaxRequest(merge(this._config, { query }));
 };
 
 ImmutableAjaxRequest.prototype.headers = function headers(object) {
   var headers = {};
   for (var name in object) {
-    name = name.toLowerCase();
     var value = object[name];
+    name = name.toLowerCase();
     if (typeof value === 'string') {
       headers[name] = value;
     } else if (typeof value === 'number') {
@@ -42,16 +84,36 @@ ImmutableAjaxRequest.prototype.headers = function headers(object) {
       throw new Error('Invalid header value for header \'' + name + '\'');
     }
   }
-  var config = merge(this.config, {});
+  var config = merge(this._config, {});
+  config.headers = headers;
+  return new ImmutableAjaxRequest(config);
+};
+
+ImmutableAjaxRequest.prototype.amendHeaders = function amendHeaders(object) {
+  var headers = merge(this._config.headers, {});
+  for (var name in object) {
+    var value = object[name];
+    name = name.toLowerCase();
+    if (typeof value === 'string') {
+      headers[name] = value;
+    } else if (typeof value === 'number') {
+      headers[name] = value.toString();
+    } else {
+      throw new Error('Invalid header value for header \'' + name + '\'');
+    }
+  }
+  var config = merge(this._config, {});
   config.headers = headers;
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.body = function body(data) {
-  if (typeof data !== 'string') {
-    throw new Error;
+  if (typeof data === 'number') {
+    data = data.toString();
+  } else if (typeof data !== 'string') {
+    throw new Error('Unexpected type for request body');
   }
-  return new ImmutableAjaxRequest(merge(this.config, { body: data }));
+  return new ImmutableAjaxRequest(merge(this._config, { body: data }));
 };
 
 ImmutableAjaxRequest.prototype.urlencoded = function urlencoded(data) {
@@ -67,56 +129,84 @@ ImmutableAjaxRequest.prototype.json = function json(data) {
 };
 
 ImmutableAjaxRequest.prototype.header = function header(name, value) {
-  var config = merge(this.config, {});
+  var config = merge(this._config, {});
   config.headers[name.toLowerCase()] = value;
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.unsetHeader = function unsetHeader(name) {
-  var config = merge(this.config, {});
+  var config = merge(this._config, {});
+  name = name.toLowerCase();
   if (typeof config.headers[name] !== 'undefined') {
     delete config.headers[name];
   }
-  return createImmutableAjaxRequest(config);
+  return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.timeout = function timeout(milliseconds) {
-  if (typeof milliseconds !== 'number') {
-    throw new Error;
+  if (milliseconds === null || milliseconds === 0) {
+    milliseconds = null;
+  } else if (typeof milliseconds !== 'number') {
+    throw new Error('Expected an integer for timeout');
   }
-  return new ImmutableAjaxRequest(merge(this.config, { timeout: milliseconds }));
+  return new ImmutableAjaxRequest(merge(this._config, { timeout: milliseconds }));
 };
 
 ImmutableAjaxRequest.prototype.unsetTimeout = function unsetTimeout(milliseconds) {
-  var config = merge(this.config, {});
+  var config = merge(this._config, {});
   config.timeout = null;
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.setResponseTransformers = function setResponseTransformers(transformers) {
-  var config = merge(this.config, {});
+  if (!Array.isArray(transformers)) {
+    throw new Error('Expected an array of response transformers');
+  }
+  for (var i in transformers) {
+    if (typeof transformers[i] !== 'function') {
+      throw new Error('One or more response transformer is not a function');
+    }
+  }
+  var config = merge(this._config, {});
   config.responseTransformers = transformers.concat();
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.setAllowedStatusCode = function setAllowedStatusCode(allowedStatusCode) {
   if (typeof allowedStatusCode !== 'number' && !(allowedStatusCode instanceof RegExp) && typeof allowedStatusCode !== 'function') {
-    throw new Error;
+    throw new Error('Expected an integer, a regex or a function in setAllowedStatusCode');
   }
-  var config = merge(this.config, { allowedStatusCode });
+  var config = merge(this._config, { allowedStatusCode });
+  return new ImmutableAjaxRequest(config);
+};
+
+ImmutableAjaxRequest.prototype.polyfills = function polyfills(polyfills) {
+  var config = merge(this._config, { polyfills });
+  if (polyfills === null) {
+    config.polyfills = {};
+  }
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.toObject = function toObject(name) {
-  return merge(this.config, {});
+  return merge(this._config, {});
+};
+
+ImmutableAjaxRequest.prototype.config = function config(name) {
+  return this.toObject();
+};
+
+ImmutableAjaxRequest.prototype.debug = function debug(name) {
+  return this.toObject();
 };
 
 ImmutableAjaxRequest.prototype.send = function send(name) {
-  var config = this.config;
+  var config = this._config;
   var timeoutId;
   var didTimeout = false;
+  var PromiseImplementation = config.polyfills.Promise || window.Promise;
 
-  return new Promise(function sendPromise(resolve, reject) {
+  return new PromiseImplementation(function sendPromise(resolve, reject) {
     var httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function onreadystatechange() {
@@ -168,7 +258,11 @@ ImmutableAjaxRequest.prototype.send = function send(name) {
       }
     };
 
-    httpRequest.open(config.method, config.url, true);
+    var url = new URL(config.url, config.baseUrl || window.location).href;
+    if (config.query) {
+      url += '?' + config.query;
+    }
+    httpRequest.open(config.method, url, true);
 
     for (var name in config.headers) {
       httpRequest.setRequestHeader(name, config.headers[name]);
@@ -191,15 +285,22 @@ ImmutableAjaxRequest.prototype.send = function send(name) {
 };
 
 // Export a new instance from which all new requests are to be extended
-if (window) {
-  window.request = new ImmutableAjaxRequest({
-    method: 'GET',
-    url: '',
-    headers: {},
-    allowedStatusCode: /^2[0-9]{2}$/,
-    timeout: null,
-    responseTransformers: [
-      jsonResponseTransformer
-    ]
-  });
+const baseRequest = new ImmutableAjaxRequest({
+  method: 'GET',
+  baseUrl: '',
+  url: '',
+  body: '',
+  headers: {},
+  allowedStatusCode: /^2[0-9]{2}$/,
+  timeout: null,
+  responseTransformers: [
+    jsonResponseTransformer
+  ],
+  polyfills: {}
+});
+
+if (typeof window !== 'undefined') {
+  window.request = baseRequest;
+} else if (typeof module !== 'undefined') {
+  module.exports = baseRequest;
 }
