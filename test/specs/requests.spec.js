@@ -51,7 +51,7 @@ describe('Requests', () => {
   it('uses baseUrl if set', () =>
     request
       .method('get')
-      .baseUrl('http://localhost:8080/nested/foo')
+      .baseUrl('http://localhost:9876/nested/foo')
       .url('simple-get')
       .send()
       .then(response => {
@@ -64,8 +64,8 @@ describe('Requests', () => {
   it('uses full URL if set, regardless of base URL', () =>
     request
       .method('get')
-      .baseUrl('http://localhost:8080/nested/')
-      .url('http://localhost:8080/simple-get')
+      .baseUrl('http://localhost:9876/nested/')
+      .url('http://localhost:9876/simple-get')
       .send()
       .then(response => {
         expect(response.status).to.equal(200);

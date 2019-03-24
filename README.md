@@ -481,12 +481,21 @@ const config = req.toObject(); // or req.config() or req.debug()
 ```
 
 
-## Tests
+## Development
 
-For testing during development, the following command starts the test server:
+### Tests
+
+For testing during development, the following command starts a web server which servers a web-based mocha runner:
 
 ```bash
-$ yarn test
+$ yarn build # Tests are run against the minified library
+$ yarn mocha
 Test server is running!
 Open http://localhost:8080/ in your browser
+```
+
+Run full test suite, which runs the same mocha tests in all browsers via karma, among other things:
+
+```bash
+yarn test
 ```
