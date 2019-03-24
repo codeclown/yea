@@ -114,9 +114,13 @@ describe('ImmutableAjaxRequest', () => {
       expect(request.query({ foo: 'bar', example: 'xyz' }).query({ new: 'query' }).toObject().query).to.equal('new=query');
     });
 
-    it('stringifies any structure', () => {
-      expect(request.query({ foo: ['one', 'two'] }).toObject().query).to.equal('foo[]=one&foo[]=two');
-      expect(request.query({ foo: { one: 'two' } }).toObject().query).to.equal('foo[]=one&foo[]=two');
+    it('stringifies given object into query string', () => {
+      expect(request.query({}).toObject().query).to.equal('');
+      expect(request.query({ foo: 'bar' }).toObject().query).to.equal('foo=bar');
+      expect(request.query({ foo: 'bar', baz: 'xyz' }).toObject().query).to.equal('baz=xyz&foo=bar');
+      expect(request.query({ foo: [] }).toObject().query).to.equal('');
+      expect(request.query({ foo: ['one', 'two'] }).toObject().query).to.equal('foo=one&foo=two');
+      expect(request.query({ foo: ['two', 'one'] }).toObject().query).to.equal('foo=two&foo=one');
     });
 
     it('uses polyfilled URLSearchParams if set', () => {
@@ -145,7 +149,10 @@ describe('ImmutableAjaxRequest', () => {
 
     it('leaves no references', () => {
       const headers = { super: 'yes' };
-      expect(request.headers(headers).toObject().headers).to.not.equal(headers);
+      const req = request.headers(headers);
+      expect(req.toObject().headers).to.not.equal(headers);
+      headers.super = 'modified';
+      expect(req.toObject().headers.super).to.equal('yes');
     });
 
     it('converts values to string', () => {
@@ -299,9 +306,9 @@ describe('ImmutableAjaxRequest', () => {
     });
 
     it('throws on unexpected type', () => {
-      expect(() => request.timeout({})).to.throw('Expected an integer for timeout');
-      expect(() => request.timeout([])).to.throw('Expected an integer for timeout');
-      expect(() => request.timeout(expect)).to.throw('Expected an integer for timeout');
+      expect(() => request.timeout({})).to.throw('Expected a number for timeout');
+      expect(() => request.timeout([])).to.throw('Expected a number for timeout');
+      expect(() => request.timeout(expect)).to.throw('Expected a number for timeout');
     });
 
     it('is immutable', () => {
@@ -347,7 +354,10 @@ describe('ImmutableAjaxRequest', () => {
 
     it('leaves no reference to the array', () => {
       const array = [fn];
-      expect(request.setResponseTransformers(array).toObject().responseTransformers).to.not.equal(array);
+      const req = request.setResponseTransformers(array);
+      expect(req.toObject().responseTransformers).to.not.equal(array);
+      array.splice(0, 1);
+      expect(req.toObject().responseTransformers).to.deep.equal([fn]);
     });
 
     it('is immutable', () => {
@@ -367,10 +377,10 @@ describe('ImmutableAjaxRequest', () => {
     });
 
     it('throws on unexpected type', () => {
-      expect(() => request.setAllowedStatusCode('foo')).to.throw('Expected an integer, a regex or a function in setAllowedStatusCode');
-      expect(() => request.setAllowedStatusCode({})).to.throw('Expected an integer, a regex or a function in setAllowedStatusCode');
-      expect(() => request.setAllowedStatusCode([])).to.throw('Expected an integer, a regex or a function in setAllowedStatusCode');
-      expect(() => request.setAllowedStatusCode(null)).to.throw('Expected an integer, a regex or a function in setAllowedStatusCode');
+      expect(() => request.setAllowedStatusCode('foo')).to.throw('Expected a number, a regex or a function in setAllowedStatusCode');
+      expect(() => request.setAllowedStatusCode({})).to.throw('Expected a number, a regex or a function in setAllowedStatusCode');
+      expect(() => request.setAllowedStatusCode([])).to.throw('Expected a number, a regex or a function in setAllowedStatusCode');
+      expect(() => request.setAllowedStatusCode(null)).to.throw('Expected a number, a regex or a function in setAllowedStatusCode');
     });
 
     it('is immutable', () => {
@@ -413,6 +423,8 @@ describe('ImmutableAjaxRequest', () => {
       expect(object).to.deep.equal(request._config);
       expect(object).to.not.equal(request._config);
       expect(object.headers).to.not.equal(request._config.headers);
+      expect(object.responseTransformers).to.not.equal(request._config.responseTransformers);
+      expect(object.polyfills).to.not.equal(request._config.polyfills);
     });
 
     it('has alias .config', () => {
@@ -420,6 +432,8 @@ describe('ImmutableAjaxRequest', () => {
       expect(object).to.deep.equal(request._config);
       expect(object).to.not.equal(request._config);
       expect(object.headers).to.not.equal(request._config.headers);
+      expect(object.responseTransformers).to.not.equal(request._config.responseTransformers);
+      expect(object.polyfills).to.not.equal(request._config.polyfills);
     });
 
     it('has alias .debug', () => {
@@ -427,6 +441,8 @@ describe('ImmutableAjaxRequest', () => {
       expect(object).to.deep.equal(request._config);
       expect(object).to.not.equal(request._config);
       expect(object.headers).to.not.equal(request._config.headers);
+      expect(object.responseTransformers).to.not.equal(request._config.responseTransformers);
+      expect(object.polyfills).to.not.equal(request._config.polyfills);
     });
   });
 });

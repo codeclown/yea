@@ -1,5 +1,17 @@
 {
+  "name": "supreme-ajax",
+  "description": "Immutable-style AJAX library for the browser",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Martti Laine <martti@marttilaine.com>",
   "main": "src/index.js",
+  "files": [
+    "build"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codeclown/supreme-ajax.git"
+  },
   "devDependencies": {
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",

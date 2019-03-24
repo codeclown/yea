@@ -1,6 +1,6 @@
 # supreme-ajax
 
-> Browser AJAX library for those who like immutability.
+> Immutable-style AJAX library for the browser
 
 
 ## Principles
@@ -223,7 +223,7 @@ Sets query parameters from an object. Overwrites existing query.
 .query(object)
 ```
 
-Where `object` is key-value object of query parameters to set. Will be encoded using `URLSearchParams#toString`.
+Where `object` is key-value object of query parameters to set (will be encoded using `URLSearchParams#toString`), or a valid query string.
 
 ### headers
 
@@ -483,14 +483,10 @@ const config = req.toObject(); // or req.config() or req.debug()
 
 ## Tests
 
-Run all tests:
+For testing during development, the following command starts the test server:
 
 ```bash
-yarn test
-```
-
-Start test server and open mocha-tests in your browser for live development.
-
-```bash
-yarn live-test
+$ yarn test
+Test server is running!
+Open http://localhost:8080/ in your browser
 ```

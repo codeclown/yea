@@ -48,5 +48,6 @@ app.get('/specific-status', (req, res, next) => res.status(req.query.give).send(
 app.get('/specific-timeout', (req, res, next) => setTimeout(() => res.send('made it'), req.query.wait));
 
 app.listen(8080, () => {
-  console.log('Listening at http://localhost:8080/');
+  console.log('Test server is running!');
+  console.log('Open http://localhost:8080/ in your browser');
 });

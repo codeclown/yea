@@ -1,7 +1,9 @@
-var allowedMethods = ['GET', 'POST'];
-
-function merge(base, object) {
-  return _.merge({}, base, object);
+function mergeConfig(config, updated) {
+  return Object.assign({}, config, updated, {
+    headers: Object.assign({}, config.headers, updated.headers || {}),
+    responseTransformers: [].concat(updated.responseTransformers || config.responseTransformers),
+    polyfills: Object.assign({}, config.polyfills, updated.polyfills || {})
+  });
 }
 
 function keys(object) {
@@ -16,16 +18,21 @@ function toQueryString(data, URLSearchParams) {
   var URLSearchParamsImplementation = URLSearchParams || window.URLSearchParams;
   var params = new URLSearchParamsImplementation();
   for (var key of keys(data).sort()) {
-    params.append(key, data[key]);
+    var value = data[key];
+    if (Array.isArray(value)) {
+      for (var i in value) {
+        params.append(key, value[i]);
+      }
+    } else {
+      params.append(key, data[key]);
+    }
   }
   return params.toString();
 }
 
 function jsonResponseTransformer(response) {
   if (response.headers['content-type'] && response.headers['content-type'].indexOf('application/json') === 0) {
-    return merge(response, {
-      data: JSON.parse(response.body)
-    });
+    response.data = JSON.parse(response.body);
   }
   return response;
 }
@@ -37,10 +44,10 @@ function ImmutableAjaxRequest(config) {
 
 ImmutableAjaxRequest.prototype.method = function method(method) {
   method = method.toUpperCase();
-  if (allowedMethods.indexOf(method) === -1) {
-    throw new Error('Invalid method: ' + method)
+  if (['GET', 'POST'].indexOf(method) === -1) {
+    throw new Error('Invalid method: ' + method);
   }
-  return new ImmutableAjaxRequest(merge(this._config, { method }));
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { method }));
 };
 
 ImmutableAjaxRequest.prototype.get = function get(url) {
@@ -53,21 +60,23 @@ ImmutableAjaxRequest.prototype.post = function post(url) {
 
 ImmutableAjaxRequest.prototype.url = function url(url) {
   var segments = url.split('?');
-  return new ImmutableAjaxRequest(merge(this._config, { url: segments[0], query: segments[1] || '' }));
+  var url = segments[0];
+  var query = segments[1] || '';
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { url, query }));
 };
 
 ImmutableAjaxRequest.prototype.baseUrl = function baseUrl(baseUrl) {
   if (baseUrl === null) {
     baseUrl = '';
   }
-  return new ImmutableAjaxRequest(merge(this._config, { baseUrl }));
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { baseUrl }));
 };
 
 ImmutableAjaxRequest.prototype.query = function query(query) {
   if (typeof query !== 'string') {
     query = toQueryString(query, this._config.polyfills.URLSearchParams);
   }
-  return new ImmutableAjaxRequest(merge(this._config, { query }));
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { query }));
 };
 
 ImmutableAjaxRequest.prototype.headers = function headers(object) {
@@ -83,13 +92,13 @@ ImmutableAjaxRequest.prototype.headers = function headers(object) {
       throw new Error('Invalid header value for header \'' + name + '\'');
     }
   }
-  var config = merge(this._config, {});
+  var config = mergeConfig(this._config, {});
   config.headers = headers;
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.amendHeaders = function amendHeaders(object) {
-  var headers = merge(this._config.headers, {});
+  var headers = Object.assign({}, this._config.headers);
   for (var name in object) {
     var value = object[name];
     name = name.toLowerCase();
@@ -101,9 +110,7 @@ ImmutableAjaxRequest.prototype.amendHeaders = function amendHeaders(object) {
       throw new Error('Invalid header value for header \'' + name + '\'');
     }
   }
-  var config = merge(this._config, {});
-  config.headers = headers;
-  return new ImmutableAjaxRequest(config);
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { headers }));
 };
 
 ImmutableAjaxRequest.prototype.body = function body(data) {
@@ -112,7 +119,7 @@ ImmutableAjaxRequest.prototype.body = function body(data) {
   } else if (typeof data !== 'string') {
     throw new Error('Unexpected type for request body');
   }
-  return new ImmutableAjaxRequest(merge(this._config, { body: data }));
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { body: data }));
 };
 
 ImmutableAjaxRequest.prototype.urlencoded = function urlencoded(data) {
@@ -124,13 +131,13 @@ ImmutableAjaxRequest.prototype.json = function json(data) {
 };
 
 ImmutableAjaxRequest.prototype.header = function header(name, value) {
-  var config = merge(this._config, {});
+  var config = mergeConfig(this._config, {});
   config.headers[name.toLowerCase()] = value;
   return new ImmutableAjaxRequest(config);
 };
 
 ImmutableAjaxRequest.prototype.unsetHeader = function unsetHeader(name) {
-  var config = merge(this._config, {});
+  var config = mergeConfig(this._config, {});
   name = name.toLowerCase();
   if (typeof config.headers[name] !== 'undefined') {
     delete config.headers[name];
@@ -142,15 +149,13 @@ ImmutableAjaxRequest.prototype.timeout = function timeout(milliseconds) {
   if (milliseconds === null || milliseconds === 0) {
     milliseconds = null;
   } else if (typeof milliseconds !== 'number') {
-    throw new Error('Expected an integer for timeout');
+    throw new Error('Expected a number for timeout');
   }
-  return new ImmutableAjaxRequest(merge(this._config, { timeout: milliseconds }));
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { timeout: milliseconds }));
 };
 
-ImmutableAjaxRequest.prototype.unsetTimeout = function unsetTimeout(milliseconds) {
-  var config = merge(this._config, {});
-  config.timeout = null;
-  return new ImmutableAjaxRequest(config);
+ImmutableAjaxRequest.prototype.unsetTimeout = function unsetTimeout() {
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { timeout: null }));
 };
 
 ImmutableAjaxRequest.prototype.setResponseTransformers = function setResponseTransformers(transformers) {
@@ -162,21 +167,18 @@ ImmutableAjaxRequest.prototype.setResponseTransformers = function setResponseTra
       throw new Error('One or more response transformer is not a function');
     }
   }
-  var config = merge(this._config, {});
-  config.responseTransformers = transformers.concat();
-  return new ImmutableAjaxRequest(config);
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { responseTransformers: transformers }));
 };
 
 ImmutableAjaxRequest.prototype.setAllowedStatusCode = function setAllowedStatusCode(allowedStatusCode) {
   if (typeof allowedStatusCode !== 'number' && !(allowedStatusCode instanceof RegExp) && typeof allowedStatusCode !== 'function') {
-    throw new Error('Expected an integer, a regex or a function in setAllowedStatusCode');
+    throw new Error('Expected a number, a regex or a function in setAllowedStatusCode');
   }
-  var config = merge(this._config, { allowedStatusCode });
-  return new ImmutableAjaxRequest(config);
+  return new ImmutableAjaxRequest(mergeConfig(this._config, { allowedStatusCode }));
 };
 
 ImmutableAjaxRequest.prototype.polyfills = function polyfills(polyfills) {
-  var config = merge(this._config, { polyfills });
+  var config = mergeConfig(this._config, { polyfills });
   if (polyfills === null) {
     config.polyfills = {};
   }
@@ -184,7 +186,7 @@ ImmutableAjaxRequest.prototype.polyfills = function polyfills(polyfills) {
 };
 
 ImmutableAjaxRequest.prototype.toObject = function toObject(name) {
-  return merge(this._config, {});
+  return mergeConfig(this._config, {});
 };
 
 ImmutableAjaxRequest.prototype.config = function config(name) {
@@ -280,7 +282,7 @@ ImmutableAjaxRequest.prototype.send = function send(name) {
 };
 
 // Export a new instance from which all new requests are to be extended
-const baseRequest = new ImmutableAjaxRequest({
+var baseRequest = new ImmutableAjaxRequest({
   method: 'GET',
   baseUrl: '',
   url: '',
