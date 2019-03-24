@@ -46,7 +46,7 @@ request
   .query({ foo: 'bar' })
   .send()
   .then(response => {
-    console.error(response.body);
+    console.log(response.body);
   })
   .catch(error => {
     console.error(error.response.status);
