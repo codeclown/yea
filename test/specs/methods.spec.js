@@ -24,6 +24,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.get('http://example.com/foo');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -36,6 +37,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.post('http://example.com/foo');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -52,6 +54,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.method('get');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -72,6 +75,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.url('http://example.com');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -88,6 +92,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.baseUrl('http://example.com');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -124,6 +129,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.query('foo=bar&example=xyz');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -162,6 +168,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.headers({ super: 123 });
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -198,6 +205,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.amendHeaders({ super: 123 });
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -218,6 +226,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.unsetHeader('foo');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -239,6 +248,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.body('holla');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -257,6 +267,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.json('holla');
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -279,6 +290,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.urlencoded({ hey: 'hi' });
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -298,6 +310,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.timeout(99);
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -309,6 +322,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.unsetTimeout();
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -345,6 +359,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.setResponseTransformers([]);
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -367,6 +382,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.setAllowedStatusCode(200);
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 
@@ -393,6 +409,7 @@ describe('Methods', () => {
     it('is immutable', () => {
       const req = supremeAjax.polyfills({ Promise: dummy });
       expect(req).to.not.equal(supremeAjax);
+      expect(req.constructor).to.equal(supremeAjax.constructor);
     });
   });
 

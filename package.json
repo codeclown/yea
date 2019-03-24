@@ -52,6 +52,7 @@
     "bundlesize": "bundlesize",
     "lint": "eslint src",
     "karma": "karma start test/karma.conf.js --single-run",
-    "test": "yarn lint && yarn build && yarn bundlesize && yarn karma"
+    "commonjs-test": "node test/commonjs-test.js",
+    "test": "yarn lint && yarn build && yarn bundlesize && yarn commonjs-test && yarn karma"
   }
 }
