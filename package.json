@@ -5,9 +5,6 @@
   "license": "MIT",
   "author": "Martti Laine <martti@marttilaine.com>",
   "main": "src/index.js",
-  "files": [
-    "build"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/codeclown/supreme-ajax.git"
@@ -31,7 +28,9 @@
       "commonjs": true
     },
     "extends": "eslint:recommended",
-    "globals": {},
+    "globals": {
+      "define": true
+    },
     "parserOptions": {
       "ecmaVersion": 2018
     },
@@ -40,7 +39,7 @@
   "bundlesize": [
     {
       "path": "./build/supreme-ajax.js",
-      "maxSize": "2.4KB"
+      "maxSize": "2.5KB"
     },
     {
       "path": "./build/supreme-ajax.min.js",
