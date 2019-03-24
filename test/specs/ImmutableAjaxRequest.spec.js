@@ -119,6 +119,13 @@ describe('ImmutableAjaxRequest', () => {
       expect(request.query({ foo: { one: 'two' } }).toObject().query).to.equal('foo[]=one&foo[]=two');
     });
 
+    it('uses polyfilled URLSearchParams if set', () => {
+      function MyURLSearchParams() {}
+      MyURLSearchParams.prototype.append = () => {};
+      MyURLSearchParams.prototype.toString = () => 'fake query';
+      expect(request.polyfills({ URLSearchParams: MyURLSearchParams }).query({ foo: 'bar' }).toObject().query).to.equal('fake query');
+    });
+
     it('is immutable', () => {
       const req = request.query('foo=bar&example=xyz');
       expect(req).to.not.equal(request);
@@ -266,8 +273,15 @@ describe('ImmutableAjaxRequest', () => {
       expect(request.urlencoded({ hey: 'hi' }).toObject().body).to.equal('hey=hi');
     });
 
-    it('sets content-type header to application/ASd', () => {
+    it('sets content-type header to application/x-www-form-urlencoded', () => {
       expect(request.urlencoded('holla').toObject().headers['content-type']).to.equal('application/x-www-form-urlencoded');
+    });
+
+    it('uses polyfilled URLSearchParams if set', () => {
+      function MyURLSearchParams() {}
+      MyURLSearchParams.prototype.append = () => {};
+      MyURLSearchParams.prototype.toString = () => 'fake query';
+      expect(request.polyfills({ URLSearchParams: MyURLSearchParams }).urlencoded({ hey: 'hi' }).toObject().body).to.equal('fake query');
     });
 
     it('is immutable', () => {
@@ -371,6 +385,10 @@ describe('ImmutableAjaxRequest', () => {
 
     it('sets Promise', () => {
       expect(request.polyfills({ Promise: dummy }).toObject().polyfills.Promise).to.equal(dummy);
+    });
+
+    it('sets URLSearchParams', () => {
+      expect(request.polyfills({ URLSearchParams: dummy }).toObject().polyfills.URLSearchParams).to.equal(dummy);
     });
 
     it('leaves no reference to the object', () => {

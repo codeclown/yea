@@ -12,6 +12,15 @@ function keys(object) {
   return keys;
 }
 
+function toQueryString(data, URLSearchParams) {
+  var URLSearchParamsImplementation = URLSearchParams || window.URLSearchParams;
+  var params = new URLSearchParamsImplementation();
+  for (var key of keys(data).sort()) {
+    params.append(key, data[key]);
+  }
+  return params.toString();
+}
+
 function jsonResponseTransformer(response) {
   if (response.headers['content-type'] && response.headers['content-type'].indexOf('application/json') === 0) {
     return merge(response, {
@@ -56,17 +65,7 @@ ImmutableAjaxRequest.prototype.baseUrl = function baseUrl(baseUrl) {
 
 ImmutableAjaxRequest.prototype.query = function query(query) {
   if (typeof query !== 'string') {
-    var params = new URLSearchParams();
-    for (var key of keys(query).sort()) {
-      if (Array.isArray(query[key])) {
-        for (var item in query[key]) {
-          params.append(key, query[key][item]);
-        }
-      } else {
-        params.append(key, query[key]);
-      }
-    }
-    query = params.toString();
+    query = toQueryString(query, this._config.polyfills.URLSearchParams);
   }
   return new ImmutableAjaxRequest(merge(this._config, { query }));
 };
@@ -117,11 +116,7 @@ ImmutableAjaxRequest.prototype.body = function body(data) {
 };
 
 ImmutableAjaxRequest.prototype.urlencoded = function urlencoded(data) {
-  var params = new URLSearchParams();
-  for (var key in data) {
-    params.append(key, data[key]);
-  }
-  return this.header('content-type', 'application/x-www-form-urlencoded').body(params.toString());
+  return this.header('content-type', 'application/x-www-form-urlencoded').body(toQueryString(data, this._config.polyfills.URLSearchParams));
 };
 
 ImmutableAjaxRequest.prototype.json = function json(data) {
