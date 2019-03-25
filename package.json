@@ -1,7 +1,7 @@
 {
   "name": "supreme-ajax",
   "description": "Immutable-style AJAX library for the browser",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "author": "Martti Laine <martti@marttilaine.com>",
   "main": "src/index.js",
