@@ -7,3 +7,6 @@ script: yarn test
 
 notifications:
   email: false
+
+addons:
+  sauce_connect: true
