@@ -12,7 +12,7 @@
 - Throws meaningful errors
 - Understands Content-Type
   - Decodes JSON responses by default
-- Works on modern browsers
+- [Works on modern browsers](#browser-support)
   - No external dependencies
   - See [polyfills](#polyfills) for a list of polyfills you might need for older browsers
 - [Fully tested](/test/specs)
@@ -519,6 +519,11 @@ Run full test suite, which runs the same mocha tests in all browsers via karma, 
 ```bash
 yarn test
 ```
+
+
+## Browser support
+
+Cross-browser Testing Platform Provided by [Sauce Labs](https://saucelabs.com).
 
 
 ## License
