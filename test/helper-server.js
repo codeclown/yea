@@ -8,6 +8,7 @@ app.use(bodyParser.text({ type: '*/*' }));
 
 app.get('/simple-get', (req, res, next) => res.send('hello'));
 app.get('/nested/simple-get', (req, res, next) => res.send('nested hello'));
+app.post('/dump-request-body', (req, res, next) => res.send(req.body));
 app.get('/dump-headers', (req, res, next) => res.send(
   Object.keys(req.headers).sort().map(name => `${name}: ${req.headers[name]}`).join('\n')
 ));

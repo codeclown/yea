@@ -332,6 +332,18 @@ describe('Methods', () => {
     });
   });
 
+  describe('.sendUrlencoded', () => {
+    it('exists (see requests.spec.js for more tests)', () => {
+      expect(supremeAjax.sendUrlencoded).to.be.ok;
+    });
+  });
+
+  describe('.sendJson', () => {
+    it('exists (see requests.spec.js for more tests)', () => {
+      expect(supremeAjax.sendJson).to.be.ok;
+    });
+  });
+
   describe('.setResponseTransformers', () => {
     const fn = () => {};
 

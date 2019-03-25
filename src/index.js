@@ -205,7 +205,15 @@
     return this.toObject();
   };
 
-  SupremeAjaxRequest.prototype.send = function send() {
+  SupremeAjaxRequest.prototype.sendUrlencoded = function sendUrlencoded(data) {
+    return this.urlencoded(data).send();
+  };
+
+  SupremeAjaxRequest.prototype.sendJson = function sendJson(data) {
+    return this.json(data).send();
+  };
+
+  SupremeAjaxRequest.prototype.send = function send(body) {
     var config = this._config;
     var timeoutId;
     var didTimeout = false;
@@ -286,7 +294,7 @@
       if (config.method === 'get') {
         httpRequest.send();
       } else {
-        httpRequest.send(config.body);
+        httpRequest.send(typeof body !== 'undefined' ? body : config.body);
       }
     });
   };

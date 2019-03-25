@@ -117,6 +117,31 @@ describe('Requests', () => {
       })
   );
 
+  it('sends body', () =>
+    supremeAjax
+      .method('post')
+      .url('/dump-request-body')
+      .body('here i am')
+      .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('here i am');
+      })
+  );
+
+  it('sends body via .send', () =>
+    supremeAjax
+      .method('post')
+      .url('/dump-request-body')
+      .send('here i am')
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('here i am');
+      })
+  );
+
   it('sends urlencoded', () =>
     supremeAjax
       .method('post')
@@ -130,12 +155,36 @@ describe('Requests', () => {
       })
   );
 
+  it('sends urlencoded via .sendUrlencoded', () =>
+    supremeAjax
+      .method('post')
+      .url('/validate-urlencoded-request')
+      .sendUrlencoded({ hello: 'there', whats: 'up' })
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('PASS');
+      })
+  );
+
   it('sends json', () =>
     supremeAjax
       .method('post')
       .url('/validate-json-request')
       .json({ lover: 'leaver' })
       .send()
+      .then(response => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('{"lover":"leaver"}');
+      })
+  );
+
+  it('sends json via .sendJson', () =>
+    supremeAjax
+      .method('post')
+      .url('/validate-json-request')
+      .sendJson({ lover: 'leaver' })
       .then(response => {
         expect(response.status).to.equal(200);
         expect(response.body).to.be.a('string');

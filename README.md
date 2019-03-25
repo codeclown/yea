@@ -359,8 +359,10 @@ Removes the timeout-value previously set with [`timeout`](#timeout).
 Dispatches the request and returns a `Promise`.
 
 ```js
-.send()
+.send([body])
 ```
+
+Where the optional argument `body` is a string. If it is set, it will be set as the request body. Also see [`sendJson`](#sendjson) and [`sendUrlencoded`](#sendurlencoded).
 
 The Promise resolves with a `response` object.
 
@@ -391,6 +393,22 @@ req.send().then(() => {
 ```
 
 See [`polyfills`](#polyfills) for switching away from global `Promise` (e.g. bluebird).
+
+### sendUrlencoded
+
+Short-hand for `.urlencoded(data).send()`.
+
+```js
+.sendUrlencoded(data)
+```
+
+### sendJson
+
+Short-hand for `.json(data).send()`.
+
+```js
+.sendJson(data)
+```
 
 ### setResponseTransformers
 
