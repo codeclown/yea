@@ -15,6 +15,17 @@ describe('Methods', () => {
     });
   });
 
+  describe('constructor', () => {
+    it('throws if used as a function', () => {
+      expect(() => supremeAjax()).to.throw('supremeAjax is not a function');
+    });
+
+    it('throws if used as a constructor', () => {
+      expect(() => new supremeAjax).to.throw('supremeAjax is not a constructor');
+      expect(() => new supremeAjax()).to.throw('supremeAjax is not a constructor');
+    });
+  });
+
   describe('.get', () => {
     it('sets method and URL', () => {
       expect(supremeAjax.get('http://example.com/foo').toObject().method).to.equal('GET');
