@@ -112,7 +112,7 @@ request
 
 ## Extending
 
-Each method of `ImmutableAjaxRequest` returns a new instance of `ImmutableAjaxRequest`. This is demonstrated in the example below.
+Each method of `SupremeAjaxRequest` returns a new instance of `SupremeAjaxRequest`. This is demonstrated in the example below.
 
 The example uses [`toObject`](#toobject) which returns a copy of all configuration of that specific instance at that moment in time.
 
@@ -146,7 +146,7 @@ api.post('/accounts').body(data).send();
 
 ## Inspect request config
 
-Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `ImmutableAjaxRequest` instance.
+Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `SupremeAjaxRequest` instance.
 
 ```js
 const req = request.get('https://example.com');
@@ -380,7 +380,7 @@ request
   })
 ```
 
-A new `Promise` is always returned, and the `ImmutableAjaxRequest` is not mutated, so you can send the same request multiple times.
+A new `Promise` is always returned, and the `SupremeAjaxRequest` is not mutated, so you can send the same request multiple times.
 
 ```js
 const req = request.get('https://example.com');
@@ -519,3 +519,8 @@ Run full test suite, which runs the same mocha tests in all browsers via karma, 
 ```bash
 yarn test
 ```
+
+
+## License
+
+MIT
