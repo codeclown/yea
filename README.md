@@ -15,7 +15,7 @@
 - [Works on modern browsers](#browser-support)
   - See [polyfills](#polyfills) for a list of polyfills if you target very old browsers
 - No external dependencies
-- Quite small (<2.5KB minified)
+- Quite small (<2.2KB minified and gzipped)
 - [Fully tested](/test/specs)
 
 Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).

@@ -232,7 +232,9 @@
                 continue;
               }
               var segments = items[i].split(': ');
-              headers[segments[0]] = segments[1];
+              // TODO: missing test, search for 'lowercases incoming response header names'
+              var key = segments[0].toLowerCase();
+              headers[key] = segments[1];
             }
 
             var response = {

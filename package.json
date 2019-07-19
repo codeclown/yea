@@ -40,7 +40,7 @@
   "bundlesize": [
     {
       "path": "./build/supreme-ajax.js",
-      "maxSize": "2.5KB"
+      "maxSize": "2.6KB"
     },
     {
       "path": "./build/supreme-ajax.min.js",

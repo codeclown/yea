@@ -48,6 +48,11 @@ describe('Requests', () => {
       })
   );
 
+  // it is almost impossible to send any other than lowercase header names from our
+  // node-based test server, so we can't really test this property at this time
+  // see: https://github.com/nodejs/node/issues/3591
+  it('lowercases incoming response header names');
+
   it('uses baseUrl if set', () =>
     supremeAjax
       .method('get')
