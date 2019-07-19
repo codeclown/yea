@@ -18,6 +18,18 @@
 Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 
+## Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+- [Inspect request config](#inspect-request-config)
+- [Extending](#extending)
+- [Development](#development)
+- [Browser support](#browser-support)
+- [License](#license) (it's MIT)
+
+
 ## Installation
 
 Install via npm or yarn:
@@ -107,50 +119,6 @@ request
   .polyfills({ Promise: require('bluebird') })
   .get('https://example.com')
   .send()
-```
-
-
-## Inspect request config
-
-Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `SupremeAjaxRequest` instance.
-
-```js
-const req = request.get('https://example.com');
-console.log(req.toObject().url);
-```
-
-
-## Extending
-
-Each method of `SupremeAjaxRequest` returns a new instance of `SupremeAjaxRequest`. This is demonstrated in the example below.
-
-The example uses [`toObject`](#toobject) which returns a copy of all configuration of that specific instance at that moment in time.
-
-```js
-const req1 = request
-  .get('https://example.com')
-  .query({ foo: 'bar' });
-
-// Extend from previous request
-const req2 = req1.query({ something: 'different' });
-
-console.log(req2 === req1); // => false
-console.log(req1.toObject().query); // => 'foo=bar'
-console.log(req2.toObject().query); // => 'something=different'
-```
-
-Practical example of how to create a base request with some defaults and later utilize it for requests:
-
-```js
-const api = request
-  .baseUrl('https://example.com/api/v1')
-  .headers({
-    'X-API-KEY': 'secret123'
-  });
-
-// The following requests will use the base URL and headers set above
-api.get('/accounts').send();
-api.post('/accounts').body(data).send();
 ```
 
 
@@ -530,6 +498,50 @@ const config = req.toObject(); // or req.config() or req.debug()
 //     req.jsonResponseTransformer
 //   ],
 // }
+```
+
+
+## Inspect request config
+
+Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `SupremeAjaxRequest` instance.
+
+```js
+const req = request.get('https://example.com');
+console.log(req.toObject().url);
+```
+
+
+## Extending
+
+Each method of `SupremeAjaxRequest` returns a new instance of `SupremeAjaxRequest`. This is demonstrated in the example below.
+
+The example uses [`toObject`](#toobject) which returns a copy of all configuration of that specific instance at that moment in time.
+
+```js
+const req1 = request
+  .get('https://example.com')
+  .query({ foo: 'bar' });
+
+// Extend from previous request
+const req2 = req1.query({ something: 'different' });
+
+console.log(req2 === req1); // => false
+console.log(req1.toObject().query); // => 'foo=bar'
+console.log(req2.toObject().query); // => 'something=different'
+```
+
+Practical example of how to create a base request with some defaults and later utilize it for requests:
+
+```js
+const api = request
+  .baseUrl('https://example.com/api/v1')
+  .headers({
+    'X-API-KEY': 'secret123'
+  });
+
+// The following requests will use the base URL and headers set above
+api.get('/accounts').send();
+api.post('/accounts').body(data).send();
 ```
 
 
