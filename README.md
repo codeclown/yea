@@ -110,6 +110,16 @@ request
 ```
 
 
+## Inspect request config
+
+Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `SupremeAjaxRequest` instance.
+
+```js
+const req = request.get('https://example.com');
+console.log(req.toObject().url);
+```
+
+
 ## Extending
 
 Each method of `SupremeAjaxRequest` returns a new instance of `SupremeAjaxRequest`. This is demonstrated in the example below.
@@ -141,16 +151,6 @@ const api = request
 // The following requests will use the base URL and headers set above
 api.get('/accounts').send();
 api.post('/accounts').body(data).send();
-```
-
-
-## Inspect request config
-
-Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `SupremeAjaxRequest` instance.
-
-```js
-const req = request.get('https://example.com');
-console.log(req.toObject().url);
 ```
 
 
