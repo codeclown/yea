@@ -7,15 +7,12 @@
 
 ## Principles
 
-- Immutable API
-- Promise-based
-- Throws meaningful errors
+- Immutable API, Promise-based, throws meaningful errors
+- No external dependencies, quite small (<2.2KB minified and gzipped)
 - Understands Content-Type
   - Decodes JSON responses by default
 - [Works on modern browsers](#browser-support)
   - See [polyfills](#polyfills) for a list of polyfills if you target very old browsers
-- No external dependencies
-- Quite small (<2.2KB minified and gzipped)
 - [Fully tested](/test/specs)
 
 Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
@@ -540,16 +537,15 @@ const config = req.toObject(); // or req.config() or req.debug()
 
 ### Tests
 
-For testing during development, the following command starts a web server which servers a web-based mocha runner:
+For local development, run `yarn dev`. It starts a web server and watches for changes. You can view the tests in the browser at [http://localhost:9876](http://localhost:9876).
 
 ```bash
-$ yarn build # Tests are run against the minified library
-$ yarn mocha
+$ yarn dev
 Test server is running!
-Open http://localhost:8080/ in your browser
+Open http://localhost:9876/ in your browser
 ```
 
-Run full test suite, which runs the same mocha tests in all browsers via karma, among other things:
+For a one-time full test suite execution, run `yarn test`. It runs all tests in a suite of browsers (powered by Karma).
 
 ```bash
 yarn test
