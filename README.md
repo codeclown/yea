@@ -24,10 +24,10 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 - [Usage](#usage)
 - [API](#api)
 - [Inspect request config](#inspect-request-config)
-- [Extending](#extending)
+- [Extending (instances)](#extending)
 - [Development](#development)
 - [Browser support](#browser-support)
-- [License](#license) (it's MIT)
+- [License](#license)
 
 
 ## Installation
@@ -511,7 +511,7 @@ console.log(req.toObject().url);
 ```
 
 
-## Extending
+## Extending (instances)
 
 Each method of `SupremeAjaxRequest` returns a new instance of `SupremeAjaxRequest`. This is demonstrated in the example below.
 
