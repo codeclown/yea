@@ -13,9 +13,12 @@
 - Understands Content-Type
   - Decodes JSON responses by default
 - [Works on modern browsers](#browser-support)
-  - No external dependencies
-  - See [polyfills](#polyfills) for a list of polyfills you might need for older browsers
+  - See [polyfills](#polyfills) for a list of polyfills if you target very old browsers
+- No external dependencies
+- Quite small (<2.5KB minified)
 - [Fully tested](/test/specs)
+
+Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 
 ## Installation
@@ -158,6 +161,29 @@ console.log(req.toObject().url);
 
 The following methods are available.
 
+- [.get(url)](#get)
+- [.post(url)](#post)
+- [.method(method)](#method)
+- [.url(url)](#url)
+- [.baseUrl(url)](#baseurl)
+- [.query(object | string)](#query)
+- [.headers(object)](#headers)
+- [.amendHeaders(object)](#amendheaders)
+- [.header(key, value)](#header)
+- [.unsetHeader(name)](#unsetheader)
+- [.body(data)](#body)
+- [.json(value)](#json)
+- [.urlencoded(value)](#urlencoded)
+- [.timeout(milliseconds)](#timeout)
+- [.unsetTimeout()](#unsettimeout)
+- [.send([body])](#send)
+- [.sendUrlencoded(data)](#sendurlencoded)
+- [.sendJson(data)](#sendjson)
+- [.setResponseTransformers([])](#setresponsetransformers)
+- [.setAllowedStatusCode(allowed)](#setallowedstatuscode)
+- [.polyfills(polyfills)](#polyfills)
+- [.toObject() / .config() / .debug()](#toobject)
+
 ### get
 
 ```js
@@ -222,7 +248,7 @@ request.baseUrl('https://example.com/nested/foo').url('accounts')  // => https:/
 Sets query parameters from an object. Overwrites existing query.
 
 ```js
-.query(object)
+.query(object | string)
 ```
 
 Where `object` is key-value object of query parameters to set (will be encoded using `URLSearchParams#toString`), or a valid query string.
@@ -435,6 +461,15 @@ request.setResponseTransformers([
     return response;
   }
 ]);
+```
+
+Reference to the original array is lost:
+
+```js
+const array = [];
+const req = request.setResponseTransformers(array);
+array.push(someFunction);
+req.toObject().responseTransformers; // not affected by the push, still []
 ```
 
 ### setAllowedStatusCode
