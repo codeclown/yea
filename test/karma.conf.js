@@ -40,7 +40,11 @@ module.exports = function(config) {
     configuration.plugins.push('karma-sauce-launcher');
     configuration.sauceLabs = {
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || Date.now(),
-      startConnect: false
+      recordScreenshots: false,
+      startConnect: true,
+      connectOptions: {
+        '-x': 'https://eu-central-1.saucelabs.com/rest/v1'
+      }
     };
     configuration.customLaunchers = {
       sl_chrome: { base: 'SauceLabs', browserName: 'chrome', platform: 'Windows 7', version: '35' },
