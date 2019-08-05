@@ -1,8 +1,8 @@
-# supreme-ajax
+# yea
 
 > Immutable-style AJAX library for the browser
 
-[![Build Status](https://travis-ci.org/codeclown/supreme-ajax.svg?branch=master)](https://travis-ci.org/codeclown/supreme-ajax)
+[![Build Status](https://travis-ci.org/codeclown/yea.svg?branch=master)](https://travis-ci.org/codeclown/yea)
 
 
 ## Principles
@@ -35,17 +35,17 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 Install via npm or yarn:
 
 ```bash
-npm install supreme-ajax
+npm install yea
 # or
-yarn add supreme-ajax
+yarn add yea
 ```
 
 Import in a project:
 
 ```js
-import request from 'supreme-ajax';
+import request from 'yea';
 // or
-const request = require('supreme-ajax');
+const request = require('yea');
 ```
 
 
@@ -55,7 +55,7 @@ See these basic examples or [the full API below](#api).
 
 ```js
 // Make a GET request
-request
+yea
   .get('https://example.com')
   .query({ foo: 'bar' })
   .send()
@@ -67,31 +67,31 @@ request
   })
 
 // Make a POST request
-request
+yea
   .post('https://example.com/accounts')
   .body('raw data')
   .send()
 
 // Make a POST request (json)
-request
+yea
   .post('https://example.com/accounts')
   .json({ foo: 'bar' })
   .send()
 
 // Make a POST request (urlencoded)
-request
+yea
   .post('https://example.com/accounts')
   .urlencoded({ foo: 'bar' })
   .send()
 
 // Set a base URL
-request
+yea
   .baseUrl('https://example.com')
   .get('/accounts')
   .send()
 
 // Set headers
-request
+yea
   .get('https://example.com')
   .headers({
     'X-Random': 1
@@ -101,13 +101,13 @@ request
   .send()
 
 // Set a timeout
-request
+yea
   .get('https://example.com')
   .timeout(2000)
   .send()
 
 // JSON responses decoded automatically based on Content-Type header (can be turned off)
-request
+yea
   .get('https://example.com/accounts.json')
   .send()
   .then(response => {
@@ -115,7 +115,7 @@ request
   })
 
 // Bring your own Promise
-request
+yea
   .polyfills({ Promise: require('bluebird') })
   .get('https://example.com')
   .send()
@@ -371,7 +371,7 @@ request
   })
 ```
 
-A new `Promise` is always returned, and the `SupremeAjaxRequest` is not mutated, so you can send the same request multiple times.
+A new `Promise` is always returned, and the `YeaAjaxRequest` is not mutated, so you can send the same request multiple times.
 
 ```js
 const req = request.get('https://example.com');
@@ -503,7 +503,7 @@ const config = req.toObject(); // or req.config() or req.debug()
 
 ## Inspect request config
 
-Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `SupremeAjaxRequest` instance.
+Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `YeaAjaxRequest` instance.
 
 ```js
 const req = request.get('https://example.com');
@@ -513,7 +513,7 @@ console.log(req.toObject().url);
 
 ## Extending (instances)
 
-Each method of `SupremeAjaxRequest` returns a new instance of `SupremeAjaxRequest`. This is demonstrated in the example below.
+Each method of `YeaAjaxRequest` returns a new instance of `YeaAjaxRequest`. This is demonstrated in the example below.
 
 The example uses [`toObject`](#toobject) which returns a copy of all configuration of that specific instance at that moment in time.
 

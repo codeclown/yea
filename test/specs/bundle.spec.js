@@ -1,10 +1,10 @@
 describe('Bundle', () => {
-  it('exports supremeAjax', () => {
-    expect(supremeAjax).to.be.ok;
-    expect(supremeAjax.constructor.name).to.equal('SupremeAjaxRequest');
+  it('exports yea', () => {
+    expect(yea).to.be.ok;
+    expect(yea.constructor.name).to.equal('YeaAjaxRequest');
   });
 
   it('exposes jsonResponseTransformer', () => {
-    expect(supremeAjax.jsonResponseTransformer).to.be.a('function');
+    expect(yea.jsonResponseTransformer).to.be.a('function');
   });
 });

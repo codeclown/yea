@@ -7,7 +7,7 @@ module.exports = function(config) {
     basePath: '../',
     files: [
       'test/specs/*.js',
-      'build/supreme-ajax.min.js'
+      'build/yea.min.js'
     ],
     exclude: [],
     frameworks: ['mocha', 'chai'],

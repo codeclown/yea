@@ -1,6 +1,6 @@
 describe('Requests', () => {
   it('makes a GET request', () =>
-    supremeAjax
+    yea
       .method('get')
       .url('/simple-get')
       .send()
@@ -12,7 +12,7 @@ describe('Requests', () => {
   );
 
   it('defaults to GET', () =>
-    supremeAjax
+    yea
       .url('/simple-get')
       .send()
       .then(response => {
@@ -23,7 +23,7 @@ describe('Requests', () => {
   );
 
   it('sends request headers', () =>
-    supremeAjax
+    yea
       .url('/dump-headers')
       .headers({
         'x-random': 'yes'
@@ -37,7 +37,7 @@ describe('Requests', () => {
   );
 
   it('returns response headers', () =>
-    supremeAjax
+    yea
       .method('get')
       .url('/dummy-headers')
       .send()
@@ -54,7 +54,7 @@ describe('Requests', () => {
   it('lowercases incoming response header names');
 
   it('uses baseUrl if set', () =>
-    supremeAjax
+    yea
       .method('get')
       .baseUrl('http://localhost:9876/nested/foo')
       .url('simple-get')
@@ -67,7 +67,7 @@ describe('Requests', () => {
   );
 
   it('uses full URL if set, regardless of base URL', () =>
-    supremeAjax
+    yea
       .method('get')
       .baseUrl('http://localhost:9876/nested/')
       .url('http://localhost:9876/simple-get')
@@ -80,7 +80,7 @@ describe('Requests', () => {
   );
 
   it('includes query string if set', () =>
-    supremeAjax
+    yea
       .url('/dump-query')
       .query({
         hello: 'yes',
@@ -95,7 +95,7 @@ describe('Requests', () => {
   );
 
   it('overrides query string via .query', () =>
-    supremeAjax
+    yea
       .url('/dump-query?first=here')
       .query({
         hello: 'yes'
@@ -109,7 +109,7 @@ describe('Requests', () => {
   );
 
   it('overrides query string via .url', () =>
-    supremeAjax
+    yea
       .query({
         hello: 'yes'
       })
@@ -123,7 +123,7 @@ describe('Requests', () => {
   );
 
   it('sends body', () =>
-    supremeAjax
+    yea
       .method('post')
       .url('/dump-request-body')
       .body('here i am')
@@ -136,7 +136,7 @@ describe('Requests', () => {
   );
 
   it('sends body via .send', () =>
-    supremeAjax
+    yea
       .method('post')
       .url('/dump-request-body')
       .send('here i am')
@@ -148,7 +148,7 @@ describe('Requests', () => {
   );
 
   it('sends urlencoded', () =>
-    supremeAjax
+    yea
       .method('post')
       .url('/validate-urlencoded-request')
       .urlencoded({ hello: 'there', whats: 'up' })
@@ -161,7 +161,7 @@ describe('Requests', () => {
   );
 
   it('sends urlencoded via .sendUrlencoded', () =>
-    supremeAjax
+    yea
       .method('post')
       .url('/validate-urlencoded-request')
       .sendUrlencoded({ hello: 'there', whats: 'up' })
@@ -173,7 +173,7 @@ describe('Requests', () => {
   );
 
   it('sends json', () =>
-    supremeAjax
+    yea
       .method('post')
       .url('/validate-json-request')
       .json({ lover: 'leaver' })
@@ -186,7 +186,7 @@ describe('Requests', () => {
   );
 
   it('sends json via .sendJson', () =>
-    supremeAjax
+    yea
       .method('post')
       .url('/validate-json-request')
       .sendJson({ lover: 'leaver' })
@@ -198,7 +198,7 @@ describe('Requests', () => {
   );
 
   it('decodes incoming json', () =>
-    supremeAjax
+    yea
       .method('get')
       .url('/json-payload')
       .send()
@@ -210,7 +210,7 @@ describe('Requests', () => {
   );
 
   it('does not decode incoming json without transformer', () =>
-    supremeAjax
+    yea
       .method('get')
       .url('/json-payload')
       .setResponseTransformers([])
@@ -224,7 +224,7 @@ describe('Requests', () => {
 
   it('throws on 404', () => {
     let error;
-    return supremeAjax
+    return yea
       .method('get')
       .url('/this-shall-not-exist')
       .send()
@@ -241,7 +241,7 @@ describe('Requests', () => {
 
   it('validates status using integer', () => {
     let error;
-    const req = supremeAjax.setAllowedStatusCode(202);
+    const req = yea.setAllowedStatusCode(202);
     return req
       .url('/specific-status?give=200')
       .send()
@@ -260,7 +260,7 @@ describe('Requests', () => {
 
   it('validates status using regex', () => {
     let error;
-    const req = supremeAjax.setAllowedStatusCode(/^300$/);
+    const req = yea.setAllowedStatusCode(/^300$/);
     return req
       .url('/specific-status?give=200')
       .send()
@@ -279,7 +279,7 @@ describe('Requests', () => {
 
   it('validates status using function', () => {
     let error;
-    const req = supremeAjax.setAllowedStatusCode(status => status === 201);
+    const req = yea.setAllowedStatusCode(status => status === 201);
     return req
       .url('/specific-status?give=200')
       .send()
@@ -301,7 +301,7 @@ describe('Requests', () => {
       response => Object.assign({}, response, { body: response.body + '-1' }),
       response => Object.assign({}, response, { body: response.body + '-2' })
     ];
-    return supremeAjax
+    return yea
       .method('get')
       .url('/simple-get')
       .setResponseTransformers(transformers)
@@ -315,7 +315,7 @@ describe('Requests', () => {
 
   it('supports specifying a timeout', () => {
     let error;
-    const req = supremeAjax.timeout(100);
+    const req = yea.timeout(100);
     return req
       .url('/specific-timeout?wait=2000')
       .send()
@@ -333,7 +333,7 @@ describe('Requests', () => {
   }).timeout(3000).slow(3000);
 
   it('supports clearing timeout', () =>
-    supremeAjax
+    yea
       .timeout(100)
       .unsetTimeout()
       .url('/specific-timeout?wait=200')
@@ -342,7 +342,7 @@ describe('Requests', () => {
 
   it('allows setting Promise-implementation', () => {
     class MyPromise extends Promise {}
-    const promise = supremeAjax
+    const promise = yea
       .method('get')
       .url('/simple-get')
       .polyfills({ Promise: MyPromise })

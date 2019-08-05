@@ -1,9 +1,9 @@
 /**
- * supreme-ajax
+ * yea
  *
  * @license MIT
  * @author Martti Laine <martti@marttilaine.com>
- * @link https://github.com/codeclown/supreme-ajax
+ * @link https://github.com/codeclown/yea
  */
 (function (factory) {
   if(typeof exports === 'object' && typeof module === 'object') {
@@ -11,7 +11,7 @@
   } else if(typeof define === 'function' && define.amd) {
     define(factory);
   } else {
-    window['supremeAjax'] = factory();
+    window['yea'] = factory();
   }
 })(function () {
   function mergeConfig(config, updated) {
@@ -45,49 +45,49 @@
     return response;
   }
 
-  function SupremeAjaxRequest(config) {
+  function YeaAjaxRequest(config) {
     this._config = config;
     this.jsonResponseTransformer = jsonResponseTransformer;
   }
 
-  SupremeAjaxRequest.prototype.method = function method(method) {
+  YeaAjaxRequest.prototype.method = function method(method) {
     method = method.toUpperCase();
     if (['GET', 'POST'].indexOf(method) === -1) {
       throw new Error('Invalid method: ' + method);
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { method: method }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { method: method }));
   };
 
-  SupremeAjaxRequest.prototype.get = function get(url) {
+  YeaAjaxRequest.prototype.get = function get(url) {
     return this.method('get').url(url);
   };
 
-  SupremeAjaxRequest.prototype.post = function post(url) {
+  YeaAjaxRequest.prototype.post = function post(url) {
     return this.method('post').url(url);
   };
 
-  SupremeAjaxRequest.prototype.url = function url(fullUrl) {
+  YeaAjaxRequest.prototype.url = function url(fullUrl) {
     var segments = fullUrl.split('?');
     var url = segments[0];
     var query = segments[1] || '';
-    return new SupremeAjaxRequest(mergeConfig(this._config, { url: url, query: query }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { url: url, query: query }));
   };
 
-  SupremeAjaxRequest.prototype.baseUrl = function baseUrl(baseUrl) {
+  YeaAjaxRequest.prototype.baseUrl = function baseUrl(baseUrl) {
     if (baseUrl === null) {
       baseUrl = '';
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { baseUrl: baseUrl }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { baseUrl: baseUrl }));
   };
 
-  SupremeAjaxRequest.prototype.query = function query(query) {
+  YeaAjaxRequest.prototype.query = function query(query) {
     if (typeof query !== 'string') {
       query = toQueryString(query, this._config.polyfills.URLSearchParams);
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { query: query }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { query: query }));
   };
 
-  SupremeAjaxRequest.prototype.headers = function headers(object) {
+  YeaAjaxRequest.prototype.headers = function headers(object) {
     var headers = {};
     for (var name in object) {
       var value = object[name];
@@ -102,10 +102,10 @@
     }
     var config = mergeConfig(this._config, {});
     config.headers = headers;
-    return new SupremeAjaxRequest(config);
+    return new YeaAjaxRequest(config);
   };
 
-  SupremeAjaxRequest.prototype.amendHeaders = function amendHeaders(object) {
+  YeaAjaxRequest.prototype.amendHeaders = function amendHeaders(object) {
     var headers = Object.assign({}, this._config.headers);
     for (var name in object) {
       var value = object[name];
@@ -118,55 +118,55 @@
         throw new Error('Invalid header value for header \'' + name + '\'');
       }
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { headers: headers }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { headers: headers }));
   };
 
-  SupremeAjaxRequest.prototype.body = function body(data) {
+  YeaAjaxRequest.prototype.body = function body(data) {
     if (typeof data === 'number') {
       data = data.toString();
     } else if (typeof data !== 'string') {
       throw new Error('Unexpected type for request body');
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { body: data }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { body: data }));
   };
 
-  SupremeAjaxRequest.prototype.urlencoded = function urlencoded(data) {
+  YeaAjaxRequest.prototype.urlencoded = function urlencoded(data) {
     return this.header('content-type', 'application/x-www-form-urlencoded').body(toQueryString(data, this._config.polyfills.URLSearchParams));
   };
 
-  SupremeAjaxRequest.prototype.json = function json(data) {
+  YeaAjaxRequest.prototype.json = function json(data) {
     return this.header('content-type', 'application/json').body(JSON.stringify(data));
   };
 
-  SupremeAjaxRequest.prototype.header = function header(name, value) {
+  YeaAjaxRequest.prototype.header = function header(name, value) {
     var config = mergeConfig(this._config, {});
     config.headers[name.toLowerCase()] = value;
-    return new SupremeAjaxRequest(config);
+    return new YeaAjaxRequest(config);
   };
 
-  SupremeAjaxRequest.prototype.unsetHeader = function unsetHeader(name) {
+  YeaAjaxRequest.prototype.unsetHeader = function unsetHeader(name) {
     var config = mergeConfig(this._config, {});
     name = name.toLowerCase();
     if (typeof config.headers[name] !== 'undefined') {
       delete config.headers[name];
     }
-    return new SupremeAjaxRequest(config);
+    return new YeaAjaxRequest(config);
   };
 
-  SupremeAjaxRequest.prototype.timeout = function timeout(milliseconds) {
+  YeaAjaxRequest.prototype.timeout = function timeout(milliseconds) {
     if (milliseconds === null || milliseconds === 0) {
       milliseconds = null;
     } else if (typeof milliseconds !== 'number') {
       throw new Error('Expected a number for timeout');
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { timeout: milliseconds }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { timeout: milliseconds }));
   };
 
-  SupremeAjaxRequest.prototype.unsetTimeout = function unsetTimeout() {
-    return new SupremeAjaxRequest(mergeConfig(this._config, { timeout: null }));
+  YeaAjaxRequest.prototype.unsetTimeout = function unsetTimeout() {
+    return new YeaAjaxRequest(mergeConfig(this._config, { timeout: null }));
   };
 
-  SupremeAjaxRequest.prototype.setResponseTransformers = function setResponseTransformers(transformers) {
+  YeaAjaxRequest.prototype.setResponseTransformers = function setResponseTransformers(transformers) {
     if (!Array.isArray(transformers)) {
       throw new Error('Expected an array of response transformers');
     }
@@ -175,45 +175,45 @@
         throw new Error('One or more response transformer is not a function');
       }
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { responseTransformers: transformers }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { responseTransformers: transformers }));
   };
 
-  SupremeAjaxRequest.prototype.setAllowedStatusCode = function setAllowedStatusCode(allowedStatusCode) {
+  YeaAjaxRequest.prototype.setAllowedStatusCode = function setAllowedStatusCode(allowedStatusCode) {
     if (typeof allowedStatusCode !== 'number' && !(allowedStatusCode instanceof RegExp) && typeof allowedStatusCode !== 'function') {
       throw new Error('Expected a number, a regex or a function in setAllowedStatusCode');
     }
-    return new SupremeAjaxRequest(mergeConfig(this._config, { allowedStatusCode: allowedStatusCode }));
+    return new YeaAjaxRequest(mergeConfig(this._config, { allowedStatusCode: allowedStatusCode }));
   };
 
-  SupremeAjaxRequest.prototype.polyfills = function polyfills(polyfills) {
+  YeaAjaxRequest.prototype.polyfills = function polyfills(polyfills) {
     var config = mergeConfig(this._config, { polyfills: polyfills });
     if (polyfills === null) {
       config.polyfills = {};
     }
-    return new SupremeAjaxRequest(config);
+    return new YeaAjaxRequest(config);
   };
 
-  SupremeAjaxRequest.prototype.toObject = function toObject() {
+  YeaAjaxRequest.prototype.toObject = function toObject() {
     return mergeConfig(this._config, {});
   };
 
-  SupremeAjaxRequest.prototype.config = function config() {
+  YeaAjaxRequest.prototype.config = function config() {
     return this.toObject();
   };
 
-  SupremeAjaxRequest.prototype.debug = function debug() {
+  YeaAjaxRequest.prototype.debug = function debug() {
     return this.toObject();
   };
 
-  SupremeAjaxRequest.prototype.sendUrlencoded = function sendUrlencoded(data) {
+  YeaAjaxRequest.prototype.sendUrlencoded = function sendUrlencoded(data) {
     return this.urlencoded(data).send();
   };
 
-  SupremeAjaxRequest.prototype.sendJson = function sendJson(data) {
+  YeaAjaxRequest.prototype.sendJson = function sendJson(data) {
     return this.json(data).send();
   };
 
-  SupremeAjaxRequest.prototype.send = function send(body) {
+  YeaAjaxRequest.prototype.send = function send(body) {
     var config = this._config;
     var timeoutId;
     var didTimeout = false;
@@ -302,7 +302,7 @@
   };
 
   // Export a new instance from which all new requests are to be extended
-  var baseRequest = new SupremeAjaxRequest({
+  var baseRequest = new YeaAjaxRequest({
     method: 'GET',
     baseUrl: '',
     url: '',

@@ -1,5 +1,5 @@
 {
-  "name": "supreme-ajax",
+  "name": "yea",
   "description": "Immutable-style AJAX library for the browser",
   "version": "1.0.3",
   "license": "MIT",
@@ -7,7 +7,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codeclown/supreme-ajax.git"
+    "url": "https://github.com/codeclown/yea.git"
   },
   "devDependencies": {
     "body-parser": "^1.18.3",
@@ -41,18 +41,18 @@
   },
   "bundlesize": [
     {
-      "path": "./build/supreme-ajax.js",
+      "path": "./build/yea.js",
       "maxSize": "2.6KB"
     },
     {
-      "path": "./build/supreme-ajax.min.js",
+      "path": "./build/yea.min.js",
       "maxSize": "2.2KB"
     }
   ],
   "scripts": {
     "mocha": "nodemon --watch test test/mocha-server.js",
-    "watch": "mkdir -p build && cp src/index.js build/supreme-ajax.js && nodemon --exec 'yarn build' --watch src src/index.js",
-    "build": "mkdir -p build && cp src/index.js build/supreme-ajax.js && uglifyjs src/index.js --comments > build/supreme-ajax.min.js",
+    "watch": "mkdir -p build && cp src/index.js build/yea.js && nodemon --exec 'yarn build' --watch src src/index.js",
+    "build": "mkdir -p build && cp src/index.js build/yea.js && uglifyjs src/index.js --comments > build/yea.min.js",
     "bundlesize": "bundlesize",
     "lint": "eslint src",
     "karma": "karma start test/karma.conf.js --single-run",
