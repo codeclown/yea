@@ -311,7 +311,7 @@ describe('Requests', function () {
 
   it('supports specifying a timeout', function () {
     var error;
-    var req = yea.timeout(100);
+    var req = yea.timeout(1000);
     return req
       .url('/specific-timeout?wait=2000')
       .send()
@@ -320,7 +320,7 @@ describe('Requests', function () {
       })
       .then(function () {
         expect(error).to.be.instanceOf(Error);
-        expect(error.message).to.equal('Request failed due to timeout (100ms)');
+        expect(error.message).to.equal('Request failed due to timeout (1000ms)');
         return req.url('/specific-timeout?wait=0').send();
       });
   }).timeout(3000).slow(3000);
