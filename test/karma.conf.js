@@ -45,6 +45,7 @@ module.exports = function(config) {
       username: process.env.SAUCE_USERNAME,
       accessKey: process.env.SAUCE_ACCESS_KEY,
       connectLocationForSERelay: 'ondemand.eu-central-1.saucelabs.com',
+      // See: https://github.com/karma-runner/karma-sauce-launcher/issues/162
       connectPortForSERelay:'80/wd/hub',
       connectOptions: {
         '-x': 'https://eu-central-1.saucelabs.com/rest/v1'
