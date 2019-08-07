@@ -12,7 +12,7 @@ module.exports = function(config) {
     exclude: [],
     frameworks: ['mocha', 'chai'],
     preprocessors: {},
-    reporters: ['progress'],
+    reporters: ['dots'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -36,7 +36,7 @@ module.exports = function(config) {
   };
 
   if (process.env.TRAVIS) {
-    configuration.reporters.push('saucelabs');
+    // configuration.reporters.push('saucelabs');
     configuration.plugins.push('karma-sauce-launcher');
     configuration.sauceLabs = {
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || Date.now().toString(),
