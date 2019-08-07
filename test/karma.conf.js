@@ -39,19 +39,23 @@ module.exports = function(config) {
     configuration.reporters.push('saucelabs');
     configuration.plugins.push('karma-sauce-launcher');
     configuration.sauceLabs = {
-      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || Date.now(),
+      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || Date.now().toString(),
       recordScreenshots: false,
       startConnect: true,
+      username: process.env.SAUCE_USERNAME,
+      accessKey: process.env.SAUCE_ACCESS_KEY,
+      connectLocationForSERelay: 'ondemand.eu-central-1.saucelabs.com',
+      connectPortForSERelay:'80/wd/hub',
       connectOptions: {
         '-x': 'https://eu-central-1.saucelabs.com/rest/v1'
       }
     };
     configuration.customLaunchers = {
-      sl_chrome: { base: 'SauceLabs', browserName: 'chrome', platform: 'Windows 7', version: '35' },
-      sl_firefox: { base: 'SauceLabs', browserName: 'firefox', version: '30' },
-      sl_ios_safari: { base: 'SauceLabs', browserName: 'iphone', platform: 'OS X 10.9', version: '7.1' },
-      sl_ie_11: { base: 'SauceLabs', browserName: 'internet explorer', platform: 'Windows 8.1', version: '11' },
-      sl_android: { base: 'SauceLabs', browserName: 'Browser', platform: 'Android', version: '4.4', deviceName: 'Samsung Galaxy S3 Emulator', deviceOrientation: 'portrait' }
+      sl_chrome: { base: 'SauceLabs', browserName: 'chrome', platform: 'Windows 7', version: '61' },
+      sl_firefox: { base: 'SauceLabs', browserName: 'firefox', version: '52' },
+      // sl_ie_11: { base: 'SauceLabs', browserName: 'internet explorer', platform: 'Windows 8.1', version: '11' },
+      // sl_ios_safari: { base: 'SauceLabs', browserName: 'iphone', platform: 'OS X 10.9', version: '7.1' },
+      // sl_android: { base: 'SauceLabs', browserName: 'Browser', platform: 'Android', version: '4.4', deviceName: 'Samsung Galaxy S3 Emulator', deviceOrientation: 'portrait' }
     };
     configuration.browsers = Object.keys(configuration.customLaunchers);
   }

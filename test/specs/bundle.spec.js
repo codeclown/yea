@@ -1,10 +1,10 @@
-describe('Bundle', () => {
-  it('exports yea', () => {
+describe('Bundle', function () {
+  it('exports yea', function () {
     expect(yea).to.be.ok;
     expect(yea.constructor.name).to.equal('YeaAjaxRequest');
   });
 
-  it('exposes jsonResponseTransformer', () => {
+  it('exposes jsonResponseTransformer', function () {
     expect(yea.jsonResponseTransformer).to.be.a('function');
   });
 });

@@ -42,11 +42,11 @@
   "bundlesize": [
     {
       "path": "./build/yea.js",
-      "maxSize": "2.6KB"
+      "maxSize": "2.8KB"
     },
     {
       "path": "./build/yea.min.js",
-      "maxSize": "2.2KB"
+      "maxSize": "2.3KB"
     }
   ],
   "scripts": {

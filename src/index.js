@@ -14,11 +14,26 @@
     window['yea'] = factory();
   }
 })(function () {
+  function assign(target) {
+    var to = Object(target);
+    for (var index = 1; index < arguments.length; index++) {
+      var nextSource = arguments[index];
+      if (nextSource !== null && nextSource !== undefined) {
+        for (var nextKey in nextSource) {
+          if (typeof nextSource[nextKey] !== 'undefined') {
+            to[nextKey] = nextSource[nextKey];
+          }
+        }
+      }
+    }
+    return to;
+  }
+
   function mergeConfig(config, updated) {
-    return Object.assign({}, config, updated, {
-      headers: Object.assign({}, config.headers, updated.headers || {}),
+    return assign({}, config, updated, {
+      headers: assign({}, config.headers, updated.headers || {}),
       responseTransformers: [].concat(updated.responseTransformers || config.responseTransformers),
-      polyfills: Object.assign({}, config.polyfills, updated.polyfills || {})
+      polyfills: assign({}, config.polyfills, updated.polyfills || {})
     });
   }
 
@@ -106,7 +121,7 @@
   };
 
   YeaAjaxRequest.prototype.amendHeaders = function amendHeaders(object) {
-    var headers = Object.assign({}, this._config.headers);
+    var headers = assign({}, this._config.headers);
     for (var name in object) {
       var value = object[name];
       name = name.toLowerCase();
