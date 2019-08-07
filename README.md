@@ -32,6 +32,19 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 ## Installation
 
+### Via CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/yea@1.0.5/build/yea.min.js"></script>
+<script>
+  yea.get('https://example.com/data.json').send().then(data => {
+    // ...
+  });
+</script>
+```
+
+### Via npm
+
 Install via npm or yarn:
 
 ```bash
