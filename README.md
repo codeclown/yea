@@ -8,7 +8,7 @@
 ## Principles
 
 - Immutable API, Promise-based, throws meaningful errors
-- No external dependencies, quite small (<2.2KB minified and gzipped)
+- No external dependencies, quite small (<2.3KB minified and gzipped)
 - Understands Content-Type
   - Decodes JSON responses by default
 - [Works on modern browsers](#browser-support)
