@@ -9,10 +9,8 @@
 
 - Immutable API, Promise-based, throws meaningful errors
 - No external dependencies, quite small (<2.3KB minified and gzipped)
-- Understands Content-Type
-  - Decodes JSON responses by default
-- [Works on modern browsers](#browser-support)
-  - See [polyfills](#polyfills) for a list of polyfills if you target very old browsers
+- Understands Content-Type (decodes JSON responses by default)
+- [Works on modern browsers and some older ones](#browser-support)
 - [Fully tested](/test/specs)
 
 Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
@@ -38,9 +36,11 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/yea@1.0.5/build/yea.min.js"></script>
 <script>
-  yea.get('https://example.com/data.json').send()
-    .then(data => {
-      // ...
+  yea.get('https://reqres.in/api/users').send()
+    .then(response => {
+      console.log(response.status);
+      console.log(response.body); // string (original JSON)
+      console.log(response.data); // object
     });
 </script>
 ```
