@@ -37,20 +37,19 @@
     });
   }
 
-  function toQueryString(data, URLSearchParams) {
-    var URLSearchParamsImplementation = URLSearchParams || window.URLSearchParams;
-    var params = new URLSearchParamsImplementation();
+  function toQueryString(data) {
+    var segments = [];
     for (var key in data) {
       var value = data[key];
       if (Array.isArray(value)) {
         for (var i in value) {
-          params.append(key, value[i]);
+          segments.push(key + '=' + encodeURIComponent(value[i]));
         }
       } else {
-        params.append(key, data[key]);
+        segments.push(key + '=' + encodeURIComponent(data[key]));
       }
     }
-    return params.toString();
+    return segments.join('&');
   }
 
   function jsonResponseTransformer(response) {
@@ -97,7 +96,7 @@
 
   YeaAjaxRequest.prototype.query = function query(query) {
     if (typeof query !== 'string') {
-      query = toQueryString(query, this._config.polyfills.URLSearchParams);
+      query = toQueryString(query);
     }
     return new YeaAjaxRequest(mergeConfig(this._config, { query: query }));
   };
@@ -146,7 +145,7 @@
   };
 
   YeaAjaxRequest.prototype.urlencoded = function urlencoded(data) {
-    return this.header('content-type', 'application/x-www-form-urlencoded').body(toQueryString(data, this._config.polyfills.URLSearchParams));
+    return this.header('content-type', 'application/x-www-form-urlencoded').body(toQueryString(data));
   };
 
   YeaAjaxRequest.prototype.json = function json(data) {

@@ -230,7 +230,7 @@ Sets query parameters from an object. Overwrites existing query.
 .query(object | string)
 ```
 
-Where `object` is key-value object of query parameters to set (will be encoded using `URLSearchParams#toString`), or a valid query string.
+Where `object` is key-value object of query parameters to set, or a valid query string.
 
 ### headers
 
@@ -473,15 +473,13 @@ Where `polyfills` is an object. See example for the possible dependencies you ca
 
 ```js
 request.polyfills({
-  Promise: window.Promise,
-  URLSearchParams: window.URLSearchParams
+  Promise: window.Promise
 })
 ```
 
-Links to polyfills for older browsers if you need to support them (these automatically patch `window.Promise` and `window.URLSearchParams`; no need to use `request.polyfills`):
+Links to polyfills for older browsers if you need to support them (these can automatically patch `window.Promise`; no need to use `request.polyfills`):
 
 - [es6-promise](https://github.com/stefanpenner/es6-promise)
-- [url-search-params](https://github.com/WebReflection/url-search-params)
 
 ### toObject
 

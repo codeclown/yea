@@ -136,17 +136,6 @@ describe('Methods', function () {
       expect(yea.query({ foo: ['two', 'one'] }).toObject().query).to.equal('foo=two&foo=one');
     });
 
-    it('uses polyfilled URLSearchParams if set', function () {
-      function MyURLSearchParams() {}
-      MyURLSearchParams.prototype.append = function () {};
-      MyURLSearchParams.prototype.toString = function () {
-        return 'fake query';
-      };
-
-      var polyfilled = yea.polyfills({ URLSearchParams: MyURLSearchParams });
-      expect(polyfilled.query({ foo: 'bar' }).toObject().query).to.equal('fake query');
-    });
-
     it('is immutable', function () {
       var req = yea.query('foo=bar&example=xyz');
       expect(req).to.not.equal(yea);
@@ -325,17 +314,6 @@ describe('Methods', function () {
       expect(yea.urlencoded('holla').toObject().headers['content-type']).to.equal('application/x-www-form-urlencoded');
     });
 
-    it('uses polyfilled URLSearchParams if set', function () {
-      function MyURLSearchParams() {}
-      MyURLSearchParams.prototype.append = function () {};
-      MyURLSearchParams.prototype.toString = function () {
-        return 'fake query';
-      };
-
-      var polyfilled = yea.polyfills({ URLSearchParams: MyURLSearchParams });
-      expect(polyfilled.urlencoded({ hey: 'hi' }).toObject().body).to.equal('fake query');
-    });
-
     it('is immutable', function () {
       var req = yea.urlencoded({ hey: 'hi' });
       expect(req).to.not.equal(yea);
@@ -482,10 +460,6 @@ describe('Methods', function () {
 
     it('sets Promise', function () {
       expect(yea.polyfills({ Promise: dummy }).toObject().polyfills.Promise).to.equal(dummy);
-    });
-
-    it('sets URLSearchParams', function () {
-      expect(yea.polyfills({ URLSearchParams: dummy }).toObject().polyfills.URLSearchParams).to.equal(dummy);
     });
 
     it('leaves no reference to the object', function () {
