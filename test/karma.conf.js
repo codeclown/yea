@@ -1,4 +1,4 @@
-const helperServer = require('./helper-server');
+const helperServer = require('./server/helper-server');
 
 module.exports = function(config) {
   // Karma config is some of the most horrifying things I've seen... anyway, here goes

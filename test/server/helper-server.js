@@ -1,6 +1,8 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 
+// This server provides useful routes for testing various AJAX requests
+
 const app = express();
 
 // Parse all request bodies into string, no decoding
