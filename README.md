@@ -2,7 +2,7 @@
 
 > Immutable-style AJAX library for the browser
 
-[![Build Status](https://travis-ci.org/codeclown/yea.svg?branch=master)](https://travis-ci.org/codeclown/yea)
+[![Build Status](https://travis-ci.org/codeclown/yea.svg?branch=master)](https://travis-ci.org/codeclown/yea) [![NPM](https://img.shields.io/badge/npm-yea-blue)](https://www.npmjs.com/package/yea) [![GitHub](https://img.shields.io/badge/github-codeclown%2Fyea-yellowgreen)](https://github.com/codeclown/yea)
 
 
 ## Principles
@@ -47,7 +47,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 ### Via npm
 
-Install via npm or yarn:
+Install via [npm](https://www.npmjs.com/package/yea) or yarn:
 
 ```bash
 npm install yea
