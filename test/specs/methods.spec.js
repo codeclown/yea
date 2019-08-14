@@ -2,10 +2,11 @@ describe('Methods', function () {
   describe('defaults', function () {
     it('has defaults', function () {
       var defaults = yea.toObject();
-      expect(defaults).to.have.keys(['method', 'baseUrl', 'url', 'body', 'headers', 'responseTransformers', 'allowedStatusCode', 'timeout', 'polyfills']);
+      expect(defaults).to.have.keys(['method', 'baseUrl', 'url', 'query', 'body', 'headers', 'responseTransformers', 'allowedStatusCode', 'timeout', 'polyfills']);
       expect(defaults.method).to.equal('GET');
       expect(defaults.baseUrl).to.equal('');
       expect(defaults.url).to.equal('');
+      expect(defaults.query).to.equal('');
       expect(defaults.body).to.equal('');
       expect(defaults.headers).to.deep.equal({});
       expect(defaults.responseTransformers).to.deep.equal([yea.jsonResponseTransformer]);
@@ -19,16 +20,13 @@ describe('Methods', function () {
     it('throws if used as a function', function () {
       expect(function () {
         yea();
-      }).to.throw('yea is not a function');
+      }).to.throw(/^(yea is not a function|Function expected|yea is not a function. \(In 'yea\(\)', 'yea' is an instance of YeaAjaxRequest\))$/);
     });
 
     it('throws if used as a constructor', function () {
       expect(function () {
         new yea();
-      }).to.throw('yea is not a constructor');
-      expect(function () {
-        new yea();
-      }).to.throw('yea is not a constructor');
+      }).to.throw(/^(yea is not a constructor|Object doesn't support this action|YeaAjaxRequest is not a constructor \(evaluating 'new yea\(\)'\))$/);
     });
   });
 
@@ -125,15 +123,6 @@ describe('Methods', function () {
 
     it('overwrites previous query', function () {
       expect(yea.query({ foo: 'bar', example: 'xyz' }).query({ new: 'query' }).toObject().query).to.equal('new=query');
-    });
-
-    it('stringifies given object into query string', function () {
-      expect(yea.query({}).toObject().query).to.equal('');
-      expect(yea.query({ foo: 'bar' }).toObject().query).to.equal('foo=bar');
-      expect(yea.query({ foo: 'bar', baz: 'xyz' }).toObject().query).to.equal('foo=bar&baz=xyz');
-      expect(yea.query({ foo: [] }).toObject().query).to.equal('');
-      expect(yea.query({ foo: ['one', 'two'] }).toObject().query).to.equal('foo=one&foo=two');
-      expect(yea.query({ foo: ['two', 'one'] }).toObject().query).to.equal('foo=two&foo=one');
     });
 
     it('is immutable', function () {

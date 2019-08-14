@@ -29,14 +29,6 @@
     return to;
   }
 
-  function mergeConfig(config, updated) {
-    return assign({}, config, updated, {
-      headers: assign({}, config.headers, updated.headers || {}),
-      responseTransformers: [].concat(updated.responseTransformers || config.responseTransformers),
-      polyfills: assign({}, config.polyfills, updated.polyfills || {})
-    });
-  }
-
   function toQueryString(data) {
     var segments = [];
     for (var key in data) {
@@ -52,6 +44,29 @@
     return segments.join('&');
   }
 
+  function createUrl(baseUrl, path, query) {
+    var url = '';
+    if (baseUrl) {
+      url += baseUrl.replace(/\/*$/, '');
+      if (path.length && path[0] !== '/') {
+        url += '/';
+      }
+    }
+    url += path;
+    if (query) {
+      url += '?' + query;
+    }
+    return url;
+  }
+
+  function mergeConfig(config, updated) {
+    return assign({}, config, updated, {
+      headers: assign({}, config.headers, updated.headers || {}),
+      responseTransformers: [].concat(updated.responseTransformers || config.responseTransformers),
+      polyfills: assign({}, config.polyfills, updated.polyfills || {})
+    });
+  }
+
   function jsonResponseTransformer(response) {
     if (response.headers['content-type'] && response.headers['content-type'].indexOf('application/json') === 0) {
       response.data = JSON.parse(response.body);
@@ -62,6 +77,14 @@
   function YeaAjaxRequest(config) {
     this._config = config;
     this.jsonResponseTransformer = jsonResponseTransformer;
+
+    // The .utils API is not guaranteed to be stable.
+    // Exposed only for testing purposes.
+    this.utils = {
+      assign: assign,
+      toQueryString: toQueryString,
+      createUrl: createUrl
+    };
   }
 
   YeaAjaxRequest.prototype.method = function method(method) {
@@ -289,10 +312,7 @@
         }
       };
 
-      var url = new URL(config.url, config.baseUrl || window.location).href;
-      if (config.query) {
-        url += '?' + config.query;
-      }
+      var url = createUrl(config.baseUrl, config.url, config.query);
       httpRequest.open(config.method, url, true);
 
       for (var name in config.headers) {
@@ -320,6 +340,7 @@
     method: 'GET',
     baseUrl: '',
     url: '',
+    query: '',
     body: '',
     headers: {},
     allowedStatusCode: /^2[0-9]{2}$/,

@@ -1,7 +1,11 @@
 describe('Bundle', function () {
   it('exports yea', function () {
     expect(yea).to.be.ok;
-    expect(yea.constructor.name).to.equal('YeaAjaxRequest');
+
+    // constructor.name is not available in IE
+    if (yea.constructor.name) {
+      expect(yea.constructor.name).to.equal('YeaAjaxRequest');
+    }
   });
 
   it('exposes jsonResponseTransformer', function () {

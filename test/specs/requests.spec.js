@@ -1,4 +1,6 @@
 describe('Requests', function () {
+  this.timeout(8000);
+
   it('makes a GET request', function () {
     return yea
       .method('get')
@@ -54,26 +56,13 @@ describe('Requests', function () {
   it('uses baseUrl if set', function () {
     return yea
       .method('get')
-      .baseUrl('http://localhost:9876/nested/foo')
+      .baseUrl('http://localhost:9876/nested')
       .url('simple-get')
       .send()
       .then(function (response) {
         expect(response.status).to.equal(200);
         expect(response.body).to.be.a('string');
         expect(response.body).to.equal('nested hello');
-      });
-  });
-
-  it('uses full URL if set, regardless of base URL', function () {
-    return yea
-      .method('get')
-      .baseUrl('http://localhost:9876/nested/')
-      .url('http://localhost:9876/simple-get')
-      .send()
-      .then(function (response) {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.be.a('string');
-        expect(response.body).to.equal('hello');
       });
   });
 
@@ -286,13 +275,13 @@ describe('Requests', function () {
     var transformers = [
       // transformer 1
       function (response) {
-        return Object.assign({}, response, {
+        return yea.utils.assign({}, response, {
           body: response.body + '-1'
         });
       },
       // transformer 2
       function (response) {
-        return Object.assign({}, response, {
+        return yea.utils.assign({}, response, {
           body: response.body + '-2'
         });
       }
@@ -323,7 +312,7 @@ describe('Requests', function () {
         expect(error.message).to.equal('Request failed due to timeout (1000ms)');
         return req.url('/specific-timeout?wait=0').send();
       });
-  }).timeout(3000).slow(3000);
+  }).slow(3000);
 
   it('supports clearing timeout', function () {
     return yea

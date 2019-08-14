@@ -35,6 +35,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 ### Via CDN
 
 ```html
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/yea@1.0.5/build/yea.min.js"></script>
 <script>
   yea.get('https://example.com/data.json').send()
@@ -209,17 +210,13 @@ Sets the base URL to which all subsequent request URLs will be appended.
 
 Where `url` is a string, e.g. `'https://example.com'`.
 
-Refer to [`URL` documentation](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL#Examples) to see how `baseUrl` and `url` behave. A few examples:
+A few examples of practical usage:
 
 ```js
 request.baseUrl('https://example.com').url('accounts')    // => https://example.com/accounts
-request.baseUrl('https://example.com/').url('accounts')   // => https://example.com/accounts
 request.baseUrl('https://example.com').url('/accounts')   // => https://example.com/accounts
-request.baseUrl('https://example.com/').url('/accounts')  // => https://example.com/accounts
-request.baseUrl('https://example.com/nested').url('accounts')      // => https://example.com/accounts
-request.baseUrl('https://example.com/nested').url('/accounts')     // => https://example.com/accounts
-request.baseUrl('https://example.com/nested/').url('accounts')     // => https://example.com/nested/accounts
-request.baseUrl('https://example.com/nested/foo').url('accounts')  // => https://example.com/nested/accounts
+request.baseUrl('https://example.com/nested').url('/accounts')     // => https://example.com/nested/accounts
+request.baseUrl('https://example.com/nested/foo').url('accounts')  // => https://example.com/nested/foo/accounts
 ```
 
 ### query
@@ -577,6 +574,8 @@ yarn test
 
 
 ## Browser support
+
+Chrome, Firefox, IE 10+, Edge, Safari 11+
 
 Cross-browser Testing Platform Provided by [Sauce Labs](https://saucelabs.com).
 
