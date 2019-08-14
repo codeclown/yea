@@ -37,9 +37,10 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 ```html
 <script src="https://cdn.jsdelivr.net/npm/yea@1.0.5/build/yea.min.js"></script>
 <script>
-  yea.get('https://example.com/data.json').send().then(data => {
-    // ...
-  });
+  yea.get('https://example.com/data.json').send()
+    .then(data => {
+      // ...
+    });
 </script>
 ```
 
@@ -68,7 +69,7 @@ See these basic examples or [the full API below](#api).
 
 ```js
 // Make a GET request
-yea
+request
   .get('https://example.com')
   .query({ foo: 'bar' })
   .send()
@@ -80,31 +81,31 @@ yea
   })
 
 // Make a POST request
-yea
+request
   .post('https://example.com/accounts')
   .body('raw data')
   .send()
 
 // Make a POST request (json)
-yea
+request
   .post('https://example.com/accounts')
   .json({ foo: 'bar' })
   .send()
 
 // Make a POST request (urlencoded)
-yea
+request
   .post('https://example.com/accounts')
   .urlencoded({ foo: 'bar' })
   .send()
 
 // Set a base URL
-yea
+request
   .baseUrl('https://example.com')
   .get('/accounts')
   .send()
 
 // Set headers
-yea
+request
   .get('https://example.com')
   .headers({
     'X-Random': 1
@@ -114,13 +115,13 @@ yea
   .send()
 
 // Set a timeout
-yea
+request
   .get('https://example.com')
   .timeout(2000)
   .send()
 
 // JSON responses decoded automatically based on Content-Type header (can be turned off)
-yea
+request
   .get('https://example.com/accounts.json')
   .send()
   .then(response => {
@@ -128,7 +129,7 @@ yea
   })
 
 // Bring your own Promise
-yea
+request
   .polyfills({ Promise: require('bluebird') })
   .get('https://example.com')
   .send()
