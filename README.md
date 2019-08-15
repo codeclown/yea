@@ -1,8 +1,10 @@
 # yea
 
-> Immutable-style AJAX library for the browser
-
 [![Build Status](https://travis-ci.org/codeclown/yea.svg?branch=master)](https://travis-ci.org/codeclown/yea) [![NPM](https://img.shields.io/badge/npm-yea-blue)](https://www.npmjs.com/package/yea) [![GitHub](https://img.shields.io/badge/github-codeclown%2Fyea-yellowgreen)](https://github.com/codeclown/yea)
+
+> Yea... an immutable-style AJAX library for the browser.
+
+Requests are configured via method calls and each method always returns a fresh request instance, with no references to past instances.
 
 
 ## Principles
@@ -11,7 +13,7 @@
 - No external dependencies, quite small (<2.3KB minified and gzipped)
 - Understands Content-Type (decodes JSON responses by default)
 - [Works on modern browsers and some older ones](#browser-support)
-- [Fully tested](/test/specs)
+- [Fully tested](/test/specs) (see e.g. [requests.spec.js](/test/specs/requests.spec.js))
 
 Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
@@ -22,7 +24,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 - [Usage](#usage)
 - [API](#api)
 - [Inspect request config](#inspect-request-config)
-- [Extending (instances)](#extending)
+- [Extending (instances)](#extending-instances)
 - [Development](#development)
 - [Browser support](#browser-support)
 - [License](#license)
@@ -134,6 +136,9 @@ request
   .polyfills({ Promise: require('bluebird') })
   .get('https://example.com')
   .send()
+
+// You can use async/await of course
+const { status, body } = await request.get('http://example.com').send()
 ```
 
 
