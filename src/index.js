@@ -262,6 +262,12 @@
     return this.json(data).send();
   };
 
+  YeaAjaxRequest.prototype.then = function then() {
+    var args = arguments;
+    var promise = this.send();
+    return promise.then.apply(promise, args);
+  };
+
   YeaAjaxRequest.prototype.send = function send(body) {
     var config = this._config;
     var timeoutId;

@@ -368,6 +368,12 @@ describe('Methods', function () {
     });
   });
 
+  describe('.then', function () {
+    it('exists (see requests.spec.js for more tests)', function () {
+      expect(yea.then).to.be.ok;
+    });
+  });
+
   describe('.setResponseTransformers', function () {
     var fn = function () {};
 

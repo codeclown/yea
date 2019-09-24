@@ -38,12 +38,11 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/yea@1.0.5/build/yea.min.js"></script>
 <script>
-  yea.get('https://reqres.in/api/users').send()
-    .then(response => {
-      console.log(response.status);
-      console.log(response.body); // string (original JSON)
-      console.log(response.data); // object
-    });
+  yea.get('https://reqres.in/api/users').then(response => {
+    console.log(response.status);
+    console.log(response.body); // string (original JSON)
+    console.log(response.data); // object
+  });
 </script>
 ```
 
@@ -75,7 +74,6 @@ See these basic examples or [the full API below](#api).
 request
   .get('https://example.com')
   .query({ foo: 'bar' })
-  .send()
   .then(response => {
     console.log(response.body);
   })
@@ -87,25 +85,21 @@ request
 request
   .post('https://example.com/accounts')
   .body('raw data')
-  .send()
 
 // Make a POST request (json)
 request
   .post('https://example.com/accounts')
   .json({ foo: 'bar' })
-  .send()
 
 // Make a POST request (urlencoded)
 request
   .post('https://example.com/accounts')
   .urlencoded({ foo: 'bar' })
-  .send()
 
 // Set a base URL
 request
   .baseUrl('https://example.com')
   .get('/accounts')
-  .send()
 
 // Set headers
 request
@@ -115,18 +109,15 @@ request
   })
   .header('x-another', 'test')
   .unsetHeader('x-another')
-  .send()
 
 // Set a timeout
 request
   .get('https://example.com')
   .timeout(2000)
-  .send()
 
 // JSON responses decoded automatically based on Content-Type header (can be turned off)
 request
   .get('https://example.com/accounts.json')
-  .send()
   .then(response => {
     console.log(response.data);
   })
@@ -135,10 +126,9 @@ request
 request
   .polyfills({ Promise: require('bluebird') })
   .get('https://example.com')
-  .send()
 
 // You can use async/await of course
-const { status, body } = await request.get('http://example.com').send()
+const { status, body } = await request.get('http://example.com')
 ```
 
 
@@ -167,6 +157,7 @@ The following methods are available.
 - [.setResponseTransformers([])](#setresponsetransformers)
 - [.setAllowedStatusCode(allowed)](#setallowedstatuscode)
 - [.polyfills(polyfills)](#polyfills)
+- [.then()](#then)
 - [.toObject() / .config() / .debug()](#toobject)
 
 ### get
@@ -401,6 +392,8 @@ req.send().then(() => {
 
 See [`polyfills`](#polyfills) for switching away from global `Promise` (e.g. bluebird).
 
+Note that calling `.send()` is not always necessary. You can usually directly call [`.then()`](#then).
+
 ### sendUrlencoded
 
 Short-hand for `.urlencoded(data).send()`.
@@ -482,6 +475,28 @@ request.polyfills({
 Links to polyfills for older browsers if you need to support them (these can automatically patch `window.Promise`; no need to use `request.polyfills`):
 
 - [es6-promise](https://github.com/stefanpenner/es6-promise)
+
+### then
+
+Sends the request and resolves like a normal Promise.
+
+```js
+.then(arguments)
+```
+
+Where arguments are what you would submit to a then-handler of a Promise.
+
+The following examples are basically equivalent:
+
+```js
+const responseHandler = response => { /* ... */ };
+
+// using .then()
+yea.get('http://example.com').then(responseHandler)
+
+// using .send()
+yea.get('http://example.com').send().then(responseHandler)
+```
 
 ### toObject
 

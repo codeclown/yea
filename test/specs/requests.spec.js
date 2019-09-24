@@ -322,6 +322,17 @@ describe('Requests', function () {
       .send();
   }).slow(500);
 
+  it('does not require .send()', function () {
+    return yea
+      .method('get')
+      .url('/simple-get')
+      .then(function (response) {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('hello');
+      });
+  });
+
   it('allows setting Promise-implementation', function () {
     function MyPromise () {}
 
