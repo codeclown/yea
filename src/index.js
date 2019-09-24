@@ -35,10 +35,22 @@
       var value = data[key];
       if (Array.isArray(value)) {
         for (var i in value) {
-          segments.push(key + '=' + encodeURIComponent(value[i]));
+          if (typeof value[i] !== 'undefined') {
+            if (value[i] === null) {
+              segments.push(encodeURIComponent(key));
+            } else {
+              segments.push(encodeURIComponent(key) + '=' + encodeURIComponent(value[i]));
+            }
+          }
         }
       } else {
-        segments.push(key + '=' + encodeURIComponent(data[key]));
+        if (typeof value !== 'undefined') {
+          if (value === null) {
+            segments.push(encodeURIComponent(key));
+          } else {
+            segments.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+          }
+        }
       }
     }
     return segments.join('&');

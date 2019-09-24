@@ -16,13 +16,49 @@ describe('utils', function () {
   });
 
   describe('.toQueryString', function () {
-    it('stringifies given object into query string', function () {
+    // Goal is to follow querystring.stringify behaviour:
+    // @see https://nodejs.org/api/querystring.html#querystring_querystring_stringify_obj_sep_eq_options
+    // Also useful is the tests in widely popular package query-string:
+    // @see https://github.com/sindresorhus/query-string/blob/de0536a7be7029a93936d2610f1b08606ac93ce7/test/stringify.js
+
+    it('stringifies an object', function () {
       expect(yea.utils.toQueryString({})).to.equal('');
       expect(yea.utils.toQueryString({ foo: 'bar' })).to.equal('foo=bar');
       expect(yea.utils.toQueryString({ foo: 'bar', baz: 'xyz' })).to.equal('foo=bar&baz=xyz');
+    });
+
+    it('encodes keys and values', function () {
+      expect(yea.utils.toQueryString({ foo: 'bar xyz' })).to.equal('foo=bar%20xyz');
+      expect(yea.utils.toQueryString({ foo: 'bar&xyz' })).to.equal('foo=bar%26xyz');
+      expect(yea.utils.toQueryString({ foo: 'bar\'xyz' })).to.equal('foo=bar\'xyz');
+      expect(yea.utils.toQueryString({ 'bar xyz': 'bar' })).to.equal('bar%20xyz=bar');
+      expect(yea.utils.toQueryString({ 'bar&xyz': 'bar' })).to.equal('bar%26xyz=bar');
+      expect(yea.utils.toQueryString({ 'bar\'xyz': 'bar' })).to.equal('bar\'xyz=bar');
+    });
+
+    it('stringifies array values', function () {
       expect(yea.utils.toQueryString({ foo: [] })).to.equal('');
       expect(yea.utils.toQueryString({ foo: ['one', 'two'] })).to.equal('foo=one&foo=two');
       expect(yea.utils.toQueryString({ foo: ['two', 'one'] })).to.equal('foo=two&foo=one');
+    });
+
+    it('stringifies objects as values', function () {
+      expect(yea.utils.toQueryString({ foo: {} })).to.equal('foo=%5Bobject%20Object%5D');
+      expect(yea.utils.toQueryString({ foo: { bar: 'xyz' } })).to.equal('foo=%5Bobject%20Object%5D');
+    });
+
+    it('regards undefined values as missing', function () {
+      expect(yea.utils.toQueryString({ foo: undefined })).to.equal('');
+      expect(yea.utils.toQueryString({ foo: undefined, bar: 'xyz' })).to.equal('bar=xyz');
+      expect(yea.utils.toQueryString({ foo: [undefined] })).to.equal('');
+      expect(yea.utils.toQueryString({ foo: ['one', undefined, 'three'] })).to.equal('foo=one&foo=three');
+    });
+
+    it('stringifies null values as ', function () {
+      expect(yea.utils.toQueryString({ foo: null })).to.equal('foo');
+      expect(yea.utils.toQueryString({ foo: null, bar: 'xyz' })).to.equal('foo&bar=xyz');
+      expect(yea.utils.toQueryString({ foo: [null] })).to.equal('foo');
+      expect(yea.utils.toQueryString({ foo: ['one', null, 'three'] })).to.equal('foo=one&foo&foo=three');
     });
   });
 
