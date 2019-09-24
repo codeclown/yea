@@ -10,7 +10,7 @@ Requests are configured via method calls and each method always returns a fresh 
 ## Principles
 
 - Immutable API, Promise-based, throws meaningful errors
-- No external dependencies, quite small (<2.3KB minified and gzipped)
+- No external dependencies, quite small (<2.4KB minified and gzipped)
 - Understands Content-Type (decodes JSON responses by default)
 - [Works on modern browsers and some older ones](#browser-support)
 - [Fully tested](/test/specs) (see e.g. [requests.spec.js](/test/specs/requests.spec.js))

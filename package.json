@@ -47,7 +47,7 @@
     },
     {
       "path": "./build/yea.min.js",
-      "maxSize": "2.3KB"
+      "maxSize": "2.4KB"
     }
   ],
   "scripts": {
