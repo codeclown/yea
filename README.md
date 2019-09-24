@@ -37,7 +37,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/yea@1.0.5/build/yea.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/yea@1.1.0/build/yea.min.js"></script>
 <script>
   yea.get('https://reqres.in/api/users').then(response => {
     console.log(response.status);
