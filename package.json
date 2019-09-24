@@ -1,7 +1,7 @@
 {
   "name": "yea",
   "description": "Immutable-style AJAX library for the browser",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "license": "MIT",
   "author": "Martti Laine <martti@marttilaine.com>",
   "main": "src/index.js",
