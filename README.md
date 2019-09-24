@@ -27,6 +27,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 - [Extending (instances)](#extending-instances)
 - [Development](#development)
 - [Browser support](#browser-support)
+- [Changelog](#changelog)
 - [License](#license)
 
 
@@ -598,6 +599,11 @@ yarn test
 Chrome, Firefox, IE 10+, Edge, Safari 11+
 
 Cross-browser Testing Platform Provided by [Sauce Labs](https://saucelabs.com).
+
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 
 ## License
