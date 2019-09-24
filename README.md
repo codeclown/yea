@@ -47,6 +47,8 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 </script>
 ```
 
+[View example in JSFiddle](https://jsfiddle.net/6kryoe90/)
+
 ### Via npm
 
 Install via [npm](https://www.npmjs.com/package/yea) or yarn:
