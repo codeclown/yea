@@ -39,6 +39,7 @@ app.post('/validate-json-request', (req, res, next) => {
 });
 app.get('/dummy-headers', (req, res, next) => res.set({ 'x-dummy': 'definitely' }).send(''));
 app.get('/json-payload', (req, res, next) => res.set('content-type', 'application/json').send('{"taker":"believer"}'));
+app.get('/json-payload-fail', (req, res, next) => res.status(400).set('content-type', 'application/json').send('{"taker":"believer"}'));
 app.get('/specific-status', (req, res, next) => res.status(req.query.give).send(''));
 app.get('/specific-timeout', (req, res, next) => setTimeout(() => res.send('made it'), req.query.wait));
 

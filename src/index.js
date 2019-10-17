@@ -307,14 +307,14 @@
               isValid = config.allowedStatusCode(response.status);
             }
 
-            if (isValid) {
-              var transformers = config.responseTransformers.concat();
-              var transformer;
-              // eslint-disable-next-line no-cond-assign
-              while (transformer = transformers.shift()) {
-                response = transformer(response);
-              }
+            var transformers = config.responseTransformers.concat();
+            var transformer;
+            // eslint-disable-next-line no-cond-assign
+            while (transformer = transformers.shift()) {
+              response = transformer(response);
+            }
 
+            if (isValid) {
               if (timeoutId) {
                 clearTimeout(timeoutId);
               }

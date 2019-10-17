@@ -191,6 +191,26 @@ describe('Requests', function () {
       });
   });
 
+  it('decodes incoming json on rejected responses', function () {
+    let error;
+    return yea
+      .method('get')
+      .url('/json-payload-fail')
+      .send()
+      .catch(function (_error) {
+        error = _error;
+      })
+      .then(function () {
+        expect(error).to.be.instanceOf(Error);
+        expect(error.message).to.equal('Request failed with status 400');
+        expect(error.response).to.be.a('object');
+        expect(error.response.data).to.deep.equal({
+          taker: 'believer'
+        });
+        expect(error.response.status).to.equal(400);
+      });
+  });
+
   it('does not decode incoming json without transformer', function () {
     return yea
       .method('get')
