@@ -1,9 +1,9 @@
-const helperServer = require('./server/helper-server');
+var helperServer = require('./server/helper-server');
 
 module.exports = function(config) {
   // Karma config is some of the most horrifying things I've seen... anyway, here goes
 
-  const configuration = {
+  var configuration = {
     basePath: '../',
     files: [
       'node_modules/es6-promise/dist/es6-promise.auto.min.js',
@@ -33,7 +33,7 @@ module.exports = function(config) {
       'karma-chai',
       'karma-chrome-launcher',
       'karma-mocha',
-      {'middleware:helper-server': ['factory', function(config) {
+      {'middleware:helper-server': ['factory', function() {
         return helperServer;
       }]}
     ]

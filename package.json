@@ -33,10 +33,16 @@
     },
     "extends": "eslint:recommended",
     "globals": {
-      "define": true
+      "define": true,
+      "describe": true,
+      "it": true,
+      "expect": true,
+      "yea": true,
+      "__dirname": true,
+      "process": true
     },
     "parserOptions": {
-      "ecmaVersion": 2018
+      "ecmaVersion": 5
     },
     "rules": {}
   },
@@ -55,7 +61,7 @@
     "watch": "mkdir -p build && cp src/index.js build/yea.js && nodemon --exec 'yarn build' --watch src src/index.js",
     "build": "mkdir -p build && cp src/index.js build/yea.js && uglifyjs src/index.js --comments > build/yea.min.js",
     "bundlesize": "bundlesize",
-    "lint": "eslint src",
+    "lint": "eslint src test",
     "karma": "karma start test/karma.conf.js --single-run",
     "commonjs-test": "node test/commonjs-test.js",
     "test": "yarn lint && yarn build && yarn bundlesize && yarn commonjs-test && yarn karma",

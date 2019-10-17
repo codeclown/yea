@@ -1,23 +1,33 @@
-const bodyParser = require('body-parser');
-const express = require('express');
+var bodyParser = require('body-parser');
+var express = require('express');
 
 // This server provides useful routes for testing various AJAX requests
 
-const app = express();
+var app = express();
 
 // Parse all request bodies into string, no decoding
 app.use(bodyParser.text({ type: '*/*' }));
 
-app.get('/simple-get', (req, res, next) => res.send('hello'));
-app.get('/nested/simple-get', (req, res, next) => res.send('nested hello'));
-app.post('/dump-request-body', (req, res, next) => res.send(req.body));
-app.get('/dump-headers', (req, res, next) => res.send(
-  Object.keys(req.headers).sort().map(name => `${name}: ${req.headers[name]}`).join('\n')
-));
-app.get('/dump-query', (req, res, next) => res.send(
-  Object.keys(req.query).sort().map(key => `${key}: ${req.query[key]}`).join('\n')
-));
-app.post('/validate-urlencoded-request', (req, res, next) => {
+app.get('/simple-get', function (req, res) {
+  return res.send('hello');
+});
+app.get('/nested/simple-get', function (req, res) {
+  return res.send('nested hello');
+});
+app.post('/dump-request-body', function (req, res) {
+  return res.send(req.body);
+});
+app.get('/dump-headers', function (req, res) {
+  return res.send(Object.keys(req.headers).sort().map(function (name) {
+    return "".concat(name, ": ").concat(req.headers[name]);
+  }).join('\n'));
+});
+app.get('/dump-query', function (req, res) {
+  return res.send(Object.keys(req.query).sort().map(function (key) {
+    return "".concat(key, ": ").concat(req.query[key]);
+  }).join('\n'));
+});
+app.post('/validate-urlencoded-request', function (req, res) {
   if (req.headers['content-type'] !== 'application/x-www-form-urlencoded') {
     res.status(400).send('FAIL (header)');
   } else if (req.body !== 'hello=there&whats=up') {
@@ -26,7 +36,7 @@ app.post('/validate-urlencoded-request', (req, res, next) => {
     res.set('content-type', 'text/plain').send('PASS');
   }
 });
-app.post('/validate-json-request', (req, res, next) => {
+app.post('/validate-json-request', function (req, res) {
   if (req.headers['content-type'] !== 'application/json') {
     res.status(400).send('FAIL (header)');
   } else {
@@ -37,10 +47,24 @@ app.post('/validate-json-request', (req, res, next) => {
     }
   }
 });
-app.get('/dummy-headers', (req, res, next) => res.set({ 'x-dummy': 'definitely' }).send(''));
-app.get('/json-payload', (req, res, next) => res.set('content-type', 'application/json').send('{"taker":"believer"}'));
-app.get('/json-payload-fail', (req, res, next) => res.status(400).set('content-type', 'application/json').send('{"taker":"believer"}'));
-app.get('/specific-status', (req, res, next) => res.status(req.query.give).send(''));
-app.get('/specific-timeout', (req, res, next) => setTimeout(() => res.send('made it'), req.query.wait));
+app.get('/dummy-headers', function (req, res) {
+  return res.set({
+    'x-dummy': 'definitely'
+  }).send('');
+});
+app.get('/json-payload', function (req, res) {
+  return res.set('content-type', 'application/json').send('{"taker":"believer"}');
+});
+app.get('/json-payload-fail', function (req, res) {
+  return res.status(400).set('content-type', 'application/json').send('{"taker":"believer"}');
+});
+app.get('/specific-status', function (req, res) {
+  return res.status(req.query.give).send('');
+});
+app.get('/specific-timeout', function (req, res) {
+  return setTimeout(function () {
+    return res.send('made it');
+  }, req.query.wait);
+});
 
 module.exports = app;
