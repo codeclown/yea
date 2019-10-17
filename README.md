@@ -1,6 +1,6 @@
 # yea
 
-[![Build Status](https://travis-ci.org/codeclown/yea.svg?branch=master)](https://travis-ci.org/codeclown/yea) [![NPM](https://img.shields.io/badge/npm-yea-blue)](https://www.npmjs.com/package/yea) [![GitHub](https://img.shields.io/badge/github-codeclown%2Fyea-yellowgreen)](https://github.com/codeclown/yea)
+[![Build Status](https://travis-ci.org/codeclown/yea.svg?branch=master)](https://travis-ci.org/codeclown/yea) [![NPM](https://img.shields.io/badge/npm-yea-blue)](https://www.npmjs.com/package/yea) [![GitHub](https://img.shields.io/badge/github-codeclown%2Fyea-yellowgreen)](https://github.com/codeclown/yea) [![Greenkeeper badge](https://badges.greenkeeper.io/codeclown/yea.svg)](https://greenkeeper.io/)
 
 > Yea... an immutable-style AJAX library for the browser.
 
