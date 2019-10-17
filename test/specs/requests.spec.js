@@ -192,7 +192,7 @@ describe('Requests', function () {
   });
 
   it('decodes incoming json on rejected responses', function () {
-    let error;
+    var error;
     return yea
       .method('get')
       .url('/json-payload-fail')
