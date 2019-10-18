@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+Features:
+- New `.prop()` method for returning values from nested objects (87f0644)
+
 ## 1.1.1
 
 Fixes:
