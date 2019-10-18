@@ -81,4 +81,39 @@ describe('utils', function () {
       expect(yea.utils.createUrl('', 'accounts', 'foo=bar')).to.equal('accounts?foo=bar');
     });
   });
+
+  describe('.parsePropPath', function () {
+    it('parses path', function () {
+      // Simple dot notation
+      expect(yea.utils.parsePropPath('data')).to.deep.equal(['data']);
+      expect(yea.utils.parsePropPath('headers')).to.deep.equal(['headers']);
+      expect(yea.utils.parsePropPath('data.accounts')).to.deep.equal(['data', 'accounts']);
+      // Array indices
+      expect(yea.utils.parsePropPath('data.accounts[0]')).to.deep.equal(['data', 'accounts', '0']);
+      expect(yea.utils.parsePropPath('data.accounts[1]')).to.deep.equal(['data', 'accounts', '1']);
+    });
+  });
+
+  describe('.applyPropPath', function () {
+    it('picks requested value from object', function () {
+      var response = {
+        headers: {
+          'content-type': 'application/json'
+        },
+        data: {
+          accounts: [
+            { name: 'Account 1' },
+            { name: 'Account 2' }
+          ]
+        }
+      };
+      expect(yea.utils.applyPropPath(response, [])).to.equal(response);
+      expect(yea.utils.applyPropPath(response, ['headers'])).to.equal(response.headers);
+      expect(yea.utils.applyPropPath(response, ['data'])).to.equal(response.data);
+      expect(yea.utils.applyPropPath(response, ['data', 'accounts'])).to.equal(response.data.accounts);
+      expect(yea.utils.applyPropPath(response, ['data', 'accounts', '0'])).to.equal(response.data.accounts['0']);
+      expect(yea.utils.applyPropPath(response, ['data', 'accounts', '1'])).to.equal(response.data.accounts['1']);
+      expect(yea.utils.applyPropPath(response, ['headers', 'content-type'])).to.equal(response.headers['content-type']);
+    });
+  });
 });

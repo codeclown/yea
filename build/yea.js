@@ -75,7 +75,8 @@
     return assign({}, config, updated, {
       headers: assign({}, config.headers, updated.headers || {}),
       responseTransformers: [].concat(updated.responseTransformers || config.responseTransformers),
-      polyfills: assign({}, config.polyfills, updated.polyfills || {})
+      polyfills: assign({}, config.polyfills, updated.polyfills || {}),
+      prop: [].concat(updated.prop || config.prop),
     });
   }
 
@@ -84,6 +85,21 @@
       response.data = JSON.parse(response.body);
     }
     return response;
+  }
+
+  function parsePropPath(path) {
+    if (Array.isArray(path)) {
+      return path;
+    }
+    return path.replace(/\]$/, '').replace(/[[\]]/g, '.').split('.');
+  }
+
+  function applyPropPath(object, path) {
+    var value = object;
+    for (var i = 0; i < path.length; i++) {
+      value = value[path[i]];
+    }
+    return value;
   }
 
   function YeaAjaxRequest(config) {
@@ -95,7 +111,9 @@
     this.utils = {
       assign: assign,
       toQueryString: toQueryString,
-      createUrl: createUrl
+      createUrl: createUrl,
+      parsePropPath: parsePropPath,
+      applyPropPath: applyPropPath
     };
   }
 
@@ -215,6 +233,17 @@
     return new YeaAjaxRequest(mergeConfig(this._config, { timeout: null }));
   };
 
+  YeaAjaxRequest.prototype.prop = function prop(path) {
+    if (path === null || path === '') {
+      path = [];
+    } else if (typeof path === 'string') {
+      path = parsePropPath(path);
+    } else if (!Array.isArray(path)) {
+      throw new Error('Expected a string (e.g. "data.items[0]") or an array for prop');
+    }
+    return new YeaAjaxRequest(mergeConfig(this._config, { prop: path }));
+  };
+
   YeaAjaxRequest.prototype.setResponseTransformers = function setResponseTransformers(transformers) {
     if (!Array.isArray(transformers)) {
       throw new Error('Expected an array of response transformers');
@@ -318,6 +347,9 @@
               if (timeoutId) {
                 clearTimeout(timeoutId);
               }
+
+              response = applyPropPath(response, config.prop);
+
               resolve(response);
             } else {
               var error = new Error('Request failed with status ' + response.status);
@@ -363,6 +395,7 @@
     headers: {},
     allowedStatusCode: /^2[0-9]{2}$/,
     timeout: null,
+    prop: [],
     responseTransformers: [
       jsonResponseTransformer
     ],

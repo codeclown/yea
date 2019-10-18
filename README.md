@@ -132,6 +132,12 @@ request
 
 // You can use async/await of course
 const { status, body } = await request.get('http://example.com')
+
+// Helper method to return a nested value from the request
+const status = await request.get('https://example.com/accounts.json').prop('status')
+const contentType = await request.get('https://example.com/accounts.json').prop(['headers', 'content-type'])
+const data = await request.get('https://example.com/accounts.json').prop('data')
+const account = await request.get('https://example.com/accounts.json').prop('data.accounts[0]')
 ```
 
 
@@ -154,6 +160,7 @@ The following methods are available.
 - [.urlencoded(value)](#urlencoded)
 - [.timeout(milliseconds)](#timeout)
 - [.unsetTimeout()](#unsettimeout)
+- [.prop(path)](#prop)
 - [.send([body])](#send)
 - [.sendUrlencoded(data)](#sendurlencoded)
 - [.sendJson(data)](#sendjson)
@@ -353,6 +360,23 @@ Removes the timeout-value previously set with [`timeout`](#timeout).
 
 ```js
 .unsetTimeout()
+```
+
+### prop
+
+Sets a path (similar to [`lodash.get`](https://lodash.com/docs/4.17.15#get)) which will be resolved once the response is returned.
+
+```js
+.prop(path)
+```
+
+Where `path` is a string or an array.
+
+Example:
+
+```js
+cosnt account = await request.get('...').prop('data.accounts[0]');
+cosnt contentType = await request.get('...').prop(['headers', 'content-type']);
 ```
 
 ### send

@@ -2,7 +2,7 @@ describe('Methods', function () {
   describe('defaults', function () {
     it('has defaults', function () {
       var defaults = yea.toObject();
-      expect(defaults).to.have.keys(['method', 'baseUrl', 'url', 'query', 'body', 'headers', 'responseTransformers', 'allowedStatusCode', 'timeout', 'polyfills']);
+      expect(defaults).to.have.keys(['method', 'baseUrl', 'url', 'query', 'body', 'headers', 'responseTransformers', 'allowedStatusCode', 'timeout', 'prop', 'polyfills']);
       expect(defaults.method).to.equal('GET');
       expect(defaults.baseUrl).to.equal('');
       expect(defaults.url).to.equal('');
@@ -12,6 +12,7 @@ describe('Methods', function () {
       expect(defaults.responseTransformers).to.deep.equal([yea.jsonResponseTransformer]);
       expect(defaults.allowedStatusCode).to.deep.equal(/^2[0-9]{2}$/);
       expect(defaults.timeout).to.equal(null);
+      expect(defaults.prop).to.deep.equal([]);
       expect(defaults.polyfills).to.deep.equal({});
     });
   });
@@ -345,6 +346,43 @@ describe('Methods', function () {
 
     it('is immutable', function () {
       var req = yea.unsetTimeout();
+      expect(req).to.not.equal(yea);
+      expect(req.constructor).to.equal(yea.constructor);
+    });
+  });
+
+  describe('.prop', function () {
+    it('sets prop', function () {
+      expect(yea.prop(null).toObject().prop).to.deep.equal([]);
+      expect(yea.prop('').toObject().prop).to.deep.equal([]);
+      expect(yea.prop('data.accounts[0]').toObject().prop).to.deep.equal(['data', 'accounts', '0']);
+      expect(yea.prop(['data', 'accounts', '0']).toObject().prop).to.deep.equal(['data', 'accounts', '0']);
+    });
+
+    it('throws on unexpected type', function () {
+      expect(function () {
+        yea.prop({});
+      }).to.throw('Expected a string (e.g. "data.items[0]") or an array for prop');
+
+      expect(function () {
+        yea.prop(function () {});
+      }).to.throw('Expected a string (e.g. "data.items[0]") or an array for prop');
+
+      expect(function () {
+        yea.prop(123);
+      }).to.throw('Expected a string (e.g. "data.items[0]") or an array for prop');
+    });
+
+    it('leaves no reference to the array', function () {
+      var array = ['headers', 'content-type'];
+      var req = yea.prop(array);
+      expect(req.toObject().prop).to.not.equal(array);
+      array.splice(0, 1);
+      expect(req.toObject().prop).to.deep.equal(['headers', 'content-type']);
+    });
+
+    it('is immutable', function () {
+      var req = yea.prop('data');
       expect(req).to.not.equal(yea);
       expect(req.constructor).to.equal(yea.constructor);
     });

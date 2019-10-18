@@ -224,6 +224,30 @@ describe('Requests', function () {
       });
   });
 
+  it('returns property via .prop()', function () {
+    return yea
+      .method('get')
+      .url('/json-payload')
+      .prop('data')
+      .send()
+      .then(function (body) {
+        expect(body).to.deep.equal({
+          taker: 'believer'
+        });
+      });
+  });
+
+  it('returns nested property via .prop()', function () {
+    return yea
+      .method('get')
+      .url('/json-payload')
+      .prop('data.taker')
+      .send()
+      .then(function (value) {
+        expect(value).to.equal('believer');
+      });
+  });
+
   it('throws on 404', function () {
     var error;
     return yea
