@@ -624,6 +624,8 @@ yarn test
 
 Chrome, Firefox, IE 10+, Edge, Safari 11+
 
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/supreme-ajax.svg)](https://saucelabs.com/u/supreme-ajax)
+
 Cross-browser Testing Platform Provided by [Sauce Labs](https://saucelabs.com).
 
 

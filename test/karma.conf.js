@@ -21,7 +21,7 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    singleRun: false,
+    singleRun: true,
     concurrency: Infinity,
 
     // Locally run on Chrome headless
@@ -40,10 +40,14 @@ module.exports = function(config) {
   };
 
   if (process.env.TRAVIS || process.env.SAUCE_USERNAME) {
-    // configuration.reporters.push('saucelabs');
+    var jobNumber = process.env.TRAVIS_JOB_NUMBER || Date.now().toString();
+    configuration.reporters.push('saucelabs');
     configuration.plugins.push('karma-sauce-launcher');
     configuration.sauceLabs = {
-      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || Date.now().toString(),
+      testName: 'yea',
+      build: jobNumber,
+      tunnelIdentifier: jobNumber,
+      public: 'public',
       recordScreenshots: false,
       recordVideo: false,
       startConnect: true,
