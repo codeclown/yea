@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+Features:
+- Support for `DELETE` and `PUT` requests (310aa68)
+
 ## 1.2.0
 
 Features:
