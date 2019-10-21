@@ -24,6 +24,30 @@ describe('Requests', function () {
       });
   });
 
+  it('makes a PUT request', function () {
+    return yea
+      .method('put')
+      .url('/simple-put')
+      .send()
+      .then(function (response) {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('golf');
+      });
+  });
+
+  it('makes a DELETE request', function () {
+    return yea
+      .method('delete')
+      .url('/simple-delete')
+      .send()
+      .then(function (response) {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('begone');
+      });
+  });
+
   it('sends request headers', function () {
     return yea
       .url('/dump-headers')

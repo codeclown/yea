@@ -119,8 +119,8 @@
 
   YeaAjaxRequest.prototype.method = function method(method) {
     method = method.toUpperCase();
-    if (['GET', 'POST'].indexOf(method) === -1) {
-      throw new Error('Invalid method: ' + method);
+    if (['GET', 'POST', 'PUT', 'DELETE'].indexOf(method) === -1) {
+      throw new Error('Invalid method: \'' + method + '\'');
     }
     return new YeaAjaxRequest(mergeConfig(this._config, { method: method }));
   };
@@ -131,6 +131,14 @@
 
   YeaAjaxRequest.prototype.post = function post(url) {
     return this.method('post').url(url);
+  };
+
+  YeaAjaxRequest.prototype.put = function put(url) {
+    return this.method('put').url(url);
+  };
+
+  YeaAjaxRequest.prototype['delete'] = function yeaDelete(url) {
+    return this.method('delete').url(url);
   };
 
   YeaAjaxRequest.prototype.url = function url(fullUrl) {

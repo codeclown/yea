@@ -186,6 +186,22 @@ Where `url` is a string. Shorthand for `request.method('get').url(url)`.
 
 Where `url` is a string. Shorthand for `request.method('post').url(url)`.
 
+### put
+
+```js
+.put(url)
+```
+
+Where `url` is a string. Shorthand for `request.method('put').url(url)`.
+
+### delete
+
+```js
+.delete(url)
+```
+
+Where `url` is a string. Shorthand for `request.method('delete').url(url)`.
+
 ### method
 
 Sets the HTTP method.

@@ -11,6 +11,12 @@ app.use(bodyParser.text({ type: '*/*' }));
 app.get('/simple-get', function (req, res) {
   return res.send('hello');
 });
+app.put('/simple-put', function (req, res) {
+  return res.send('golf');
+});
+app.delete('/simple-delete', function (req, res) {
+  return res.send('begone');
+});
 app.get('/nested/simple-get', function (req, res) {
   return res.send('nested hello');
 });

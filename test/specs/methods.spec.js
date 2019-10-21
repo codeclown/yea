@@ -57,6 +57,32 @@ describe('Methods', function () {
     });
   });
 
+  describe('.put', function () {
+    it('sets method and URL', function () {
+      expect(yea.put('http://example.com/foo').toObject().method).to.equal('PUT');
+      expect(yea.put('http://example.com/foo').toObject().url).to.equal('http://example.com/foo');
+    });
+
+    it('is immutable', function () {
+      var req = yea.put('http://example.com/foo');
+      expect(req).to.not.equal(yea);
+      expect(req.constructor).to.equal(yea.constructor);
+    });
+  });
+
+  describe('.delete', function () {
+    it('sets method and URL', function () {
+      expect(yea.delete('http://example.com/foo').toObject().method).to.equal('DELETE');
+      expect(yea.delete('http://example.com/foo').toObject().url).to.equal('http://example.com/foo');
+    });
+
+    it('is immutable', function () {
+      var req = yea.delete('http://example.com/foo');
+      expect(req).to.not.equal(yea);
+      expect(req.constructor).to.equal(yea.constructor);
+    });
+  });
+
   describe('.method', function () {
     it('sets method', function () {
       expect(yea.method('GET').toObject().method).to.equal('GET');
@@ -65,6 +91,12 @@ describe('Methods', function () {
     it('is case-insensitive', function () {
       expect(yea.method('get').toObject().method).to.equal('GET');
       expect(yea.method('gEt').toObject().method).to.equal('GET');
+    });
+
+    it('throws on unrecognized method', function () {
+      expect(function () {
+        yea.method('foobar');
+      }).to.throw('Invalid method: \'FOOBAR\'');
     });
 
     it('is immutable', function () {
