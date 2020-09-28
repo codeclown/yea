@@ -1,5 +1,10 @@
 # Changelog
 
+## Upcoming
+
+Features:
+- TypeScript type definitions (4beec22)
+
 ## 1.3.0
 
 Features:
