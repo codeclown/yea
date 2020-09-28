@@ -56,6 +56,14 @@
     return segments.join('&');
   }
 
+  function replaceUrlParams(url, params) {
+    for (var key in params) {
+      var regex = new RegExp(':' + key, 'g');
+      url = url.replace(regex, params[key]);
+    }
+    return url;
+  }
+
   function createUrl(baseUrl, path, query) {
     var url = '';
     if (baseUrl) {
@@ -73,6 +81,7 @@
 
   function mergeConfig(config, updated) {
     return assign({}, config, updated, {
+      urlParams: assign({}, config.urlParams, updated.urlParams || {}),
       headers: assign({}, config.headers, updated.headers || {}),
       responseTransformers: [].concat(updated.responseTransformers || config.responseTransformers),
       polyfills: assign({}, config.polyfills, updated.polyfills || {}),
@@ -111,6 +120,7 @@
     this.utils = {
       assign: assign,
       toQueryString: toQueryString,
+      replaceUrlParams: replaceUrlParams,
       createUrl: createUrl,
       parsePropPath: parsePropPath,
       applyPropPath: applyPropPath
@@ -146,6 +156,12 @@
     var url = segments[0];
     var query = segments[1] || '';
     return new YeaAjaxRequest(mergeConfig(this._config, { url: url, query: query }));
+  };
+
+  YeaAjaxRequest.prototype.urlParams = function urlParams(urlParams) {
+    var config = mergeConfig(this._config, {});
+    config.urlParams = assign({}, urlParams);
+    return new YeaAjaxRequest(config);
   };
 
   YeaAjaxRequest.prototype.baseUrl = function baseUrl(baseUrl) {
@@ -370,8 +386,9 @@
         }
       };
 
-      var url = createUrl(config.baseUrl, config.url, config.query);
-      httpRequest.open(config.method, url, true);
+      var url = replaceUrlParams(config.url, config.urlParams);
+      var fullUrl = createUrl(config.baseUrl, url, config.query);
+      httpRequest.open(config.method, fullUrl, true);
 
       for (var name in config.headers) {
         httpRequest.setRequestHeader(name, config.headers[name]);
@@ -398,6 +415,7 @@
     method: 'GET',
     baseUrl: '',
     url: '',
+    urlParams: {},
     query: '',
     body: '',
     headers: {},

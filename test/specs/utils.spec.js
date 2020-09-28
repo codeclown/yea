@@ -62,6 +62,20 @@ describe('utils', function () {
     });
   });
 
+  describe('.replaceUrlParams', function () {
+    it('replaces param placeholders in URL', function () {
+      expect(yea.utils.replaceUrlParams('', {})).to.equal('');
+      expect(yea.utils.replaceUrlParams('http://example.com', {})).to.equal('http://example.com');
+      expect(yea.utils.replaceUrlParams('/accounts', {})).to.equal('/accounts');
+      expect(yea.utils.replaceUrlParams('/accounts/:accountId', {})).to.equal('/accounts/:accountId');
+      expect(yea.utils.replaceUrlParams('/accounts/:accountId', { accountId: 123 })).to.equal('/accounts/123');
+      expect(yea.utils.replaceUrlParams('/accounts/:accountId/info', { accountId: 123 })).to.equal('/accounts/123/info');
+      expect(yea.utils.replaceUrlParams('/accounts/:account-id', { 'account-id': 123 })).to.equal('/accounts/123');
+      expect(yea.utils.replaceUrlParams('/accounts/:AccountId', { 'accountId': 123 })).to.equal('/accounts/:AccountId');
+      expect(yea.utils.replaceUrlParams('/:repeat/:repeat', { repeat: 123 })).to.equal('/123/123');
+    });
+  });
+
   describe('.createUrl', function () {
     it('creates URL from baseUrl, path and query', function () {
       expect(yea.utils.createUrl('', 'accounts')).to.equal('accounts');

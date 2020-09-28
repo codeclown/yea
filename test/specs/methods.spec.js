@@ -2,10 +2,11 @@ describe('Methods', function () {
   describe('defaults', function () {
     it('has defaults', function () {
       var defaults = yea.toObject();
-      expect(defaults).to.have.keys(['method', 'baseUrl', 'url', 'query', 'body', 'headers', 'responseTransformers', 'allowedStatusCode', 'timeout', 'prop', 'polyfills']);
+      expect(defaults).to.have.keys(['method', 'baseUrl', 'url', 'urlParams', 'query', 'body', 'headers', 'responseTransformers', 'allowedStatusCode', 'timeout', 'prop', 'polyfills']);
       expect(defaults.method).to.equal('GET');
       expect(defaults.baseUrl).to.equal('');
       expect(defaults.url).to.equal('');
+      expect(defaults.urlParams).to.deep.equal({});
       expect(defaults.query).to.equal('');
       expect(defaults.body).to.equal('');
       expect(defaults.headers).to.deep.equal({});
@@ -122,6 +123,32 @@ describe('Methods', function () {
 
     it('is immutable', function () {
       var req = yea.url('http://example.com');
+      expect(req).to.not.equal(yea);
+      expect(req.constructor).to.equal(yea.constructor);
+    });
+  });
+
+  describe('.urlParams', function () {
+    it('sets urlParams', function () {
+      expect(yea.urlParams({ super: 'yes' }).toObject().urlParams).to.deep.equal({ super: 'yes' });
+      expect(yea.urlParams({ SUPER: 'yes' }).toObject().urlParams).to.deep.equal({ SUPER: 'yes' });
+    });
+
+    it('overwrites existing urlParams', function () {
+      var req = yea.urlParams({ super: 'yes', foo: 'sir' });
+      expect(req.urlParams({ foo: 'bar', fresh: 'sure' }).toObject().urlParams).to.deep.equal({ foo: 'bar', fresh: 'sure' });
+    });
+
+    it('leaves no references', function () {
+      var urlParams = { super: 'yes' };
+      var req = yea.urlParams(urlParams);
+      expect(req.toObject().urlParams).to.not.equal(urlParams);
+      urlParams.super = 'modified';
+      expect(req.toObject().urlParams.super).to.equal('yes');
+    });
+
+    it('is immutable', function () {
+      var req = yea.urlParams({ super: 123 });
       expect(req).to.not.equal(yea);
       expect(req.constructor).to.equal(yea.constructor);
     });
