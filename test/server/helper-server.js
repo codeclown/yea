@@ -28,6 +28,9 @@ app.get('/dump-headers', function (req, res) {
     return "".concat(name, ": ").concat(req.headers[name]);
   }).join('\n'));
 });
+app.get('/dump-url/*', function (req, res) {
+  return res.send(req.originalUrl);
+});
 app.get('/dump-query', function (req, res) {
   return res.send(Object.keys(req.query).sort().map(function (key) {
     return "".concat(key, ": ").concat(req.query[key]);

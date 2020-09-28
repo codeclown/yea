@@ -78,6 +78,11 @@ declare class YeaAjaxRequest implements PromiseLike<YeaResponse> {
   url(url: string): this;
 
   /**
+   * Sets URL parameters which will be replaced from the URL when the request is sent.
+   */
+  urlParams(urlParams: object): this;
+
+  /**
    * Sets the base URL to which all subsequent request URLs will be appended.
    */
   baseUrl(baseUrl: string): this;

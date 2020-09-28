@@ -126,6 +126,18 @@ describe('Requests', function () {
       });
   });
 
+  it('replaces urlParams if present', function () {
+    return yea
+      .url('/dump-url/:accountId')
+      .urlParams({ accountId: 123 })
+      .send()
+      .then(function (response) {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.a('string');
+        expect(response.body).to.equal('/dump-url/123');
+      });
+  });
+
   it('sends body', function () {
     return yea
       .method('post')

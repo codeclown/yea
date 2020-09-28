@@ -14,7 +14,7 @@ Requests are configured via method calls and each method always returns a fresh 
 - Understands Content-Type (decodes JSON responses by default)
 - [TypeScript support](#usage-with-typescript)
 - [Works on modern browsers and some older ones](#browser-support)
-- [Fully tested](/test/specs) (see e.g. [requests.spec.js](/test/specs/requests.spec.js))
+- [Fully tested](/test/specs) (see e.g. [requests.spec.js](/test/specs/requests.spec.js)) in real browsers, thanks to Sauce Labs
 
 Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
@@ -85,6 +85,11 @@ request
   .catch(error => {
     console.error(error.response.status);
   })
+
+// ... with URL parameters
+request
+  .get('https://example.com/api/accounts/:accountId/info')
+  .urlParams({ accountId: 123 })
 
 // Make a POST request
 request
@@ -166,6 +171,7 @@ The following methods are available.
 - [.post(url)](#post)
 - [.method(method)](#method)
 - [.url(url)](#url)
+- [.urlParams(object)](#urlparams)
 - [.baseUrl(url)](#baseurl)
 - [.query(object | string)](#query)
 - [.headers(object)](#headers)
@@ -238,6 +244,23 @@ Sets the full URL of the request. If a query-string is present, it will override
 ```
 
 Where `url` is a string, e.g. `'https://example.com/accounts'`.
+
+### urlParams
+
+Sets URL parameters which will be replaced from the URL when the request is sent.
+
+```js
+.urlParams(object)
+```
+
+Where `object` is an object.
+
+Example:
+
+```js
+// Will make request to "/api/accounts/123/info"
+request.get('/api/accounts/:accountId/info').urlParams({ accountId: 123 })
+```
 
 ### baseUrl
 
