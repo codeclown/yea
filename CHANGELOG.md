@@ -1,10 +1,14 @@
 # Changelog
 
-## Upcoming
+## 1.5.0
 
 Features:
 - New `.urlParams()` method for easy param substitution (c7f2ff3)
 - TypeScript type definitions (4beec22)
+
+## 1.4.0
+
+Malformed release due to author messing up commits.
 
 ## 1.3.0
 

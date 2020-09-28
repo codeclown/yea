@@ -14,3 +14,27 @@ Documentation of all methods should be kept up-to-date in two places:
 ## Changelog
 
 Each change should be complemented with a bulletpoint in CHANGELOG.md under "Upcoming".
+
+## Release process
+
+Make sure to build latest sources (open issue #16):
+
+```shell
+$ yarn build
+```
+
+Bump up the version:
+
+```shell
+$ yarn version
+info Current version: 1.3.0
+question New version:
+```
+
+Publish on npm:
+
+```shell
+yarn publish
+```
+
+Remember to update CHANGELOG.md.
