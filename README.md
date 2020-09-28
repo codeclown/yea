@@ -12,6 +12,7 @@ Requests are configured via method calls and each method always returns a fresh 
 - Immutable API, Promise-based, throws meaningful errors
 - No external dependencies, quite small (<2.4KB minified and gzipped)
 - Understands Content-Type (decodes JSON responses by default)
+- [TypeScript support](#usage-with-typescript)
 - [Works on modern browsers and some older ones](#browser-support)
 - [Fully tested](/test/specs) (see e.g. [requests.spec.js](/test/specs/requests.spec.js))
 
@@ -22,6 +23,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Usage with TypeScript](#usage-with-typescript)
 - [API](#api)
 - [Inspect request config](#inspect-request-config)
 - [Extending (instances)](#extending-instances)
@@ -141,6 +143,21 @@ const account = await request.get('https://example.com/accounts.json').prop('dat
 ```
 
 
+## Usage with TypeScript
+
+Yea comes with built-in type declarations.
+
+```ts
+import yea, { YeaRequestError } from 'yea';
+request.get('https://example.com').then(response => {
+  // Response is implicitly an instance of YeaResponse
+  console.log(response.body);
+}).catch((error: YeaRequestError) => {
+  console.error(error.response.status);
+});
+```
+
+
 ## API
 
 The following methods are available.
@@ -243,13 +260,20 @@ request.baseUrl('https://example.com/nested/foo').url('accounts')  // => https:/
 
 ### query
 
-Sets query parameters from an object. Overwrites existing query.
+Sets query parameters from an object or a string. Overwrites existing query.
 
 ```js
 .query(object | string)
 ```
 
 Where `object` is key-value object of query parameters to set, or a valid query string.
+
+Example:
+
+```js
+request.query({ first: 'foo', second: 'bar' })
+request.query('first=foo&second=bar')
+```
 
 ### headers
 
@@ -324,7 +348,7 @@ console.log(req.toObject().headers) // => { 'x-token': 'secret123' }
 
 ### body
 
-Set the body of the request.
+Set the raw body of the request.
 
 ```js
 .body(data)
@@ -348,13 +372,13 @@ Shorthand for `request.header('Content-Type', 'application/json').body(JSON.stri
 
 ### urlencoded
 
-Sets a JSON-encoded body and sets the `Content-Type` header to `'application/urlencoded'`.
+Sets a URL-encoded body and sets the `Content-Type` header to `'application/urlencoded'`.
 
 ```js
-.urlencoded(value)
+.urlencoded(data)
 ```
 
-Where `value` is mixed.
+Where `value` is an object.
 
 Shorthand for `request.header('content-type', 'application/x-www-form-urlencoded').body(_valueUrlEncoded_)`.
 
@@ -391,8 +415,8 @@ Where `path` is a string or an array.
 Example:
 
 ```js
-cosnt account = await request.get('...').prop('data.accounts[0]');
-cosnt contentType = await request.get('...').prop(['headers', 'content-type']);
+const account = await request.get('...').prop('data.accounts[0]');
+const contentType = await request.get('...').prop(['headers', 'content-type']);
 ```
 
 ### send
@@ -439,7 +463,7 @@ Note that calling `.send()` is not always necessary. You can usually directly ca
 
 ### sendUrlencoded
 
-Short-hand for `.urlencoded(data).send()`.
+Shorthand for `.urlencoded(data).send()`.
 
 ```js
 .sendUrlencoded(data)
@@ -447,7 +471,7 @@ Short-hand for `.urlencoded(data).send()`.
 
 ### sendJson
 
-Short-hand for `.json(data).send()`.
+Shorthand for `.json(data).send()`.
 
 ```js
 .sendJson(data)
