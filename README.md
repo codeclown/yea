@@ -12,7 +12,8 @@ Requests are configured via method calls and each method always returns a fresh 
 - Immutable API, Promise-based, throws meaningful errors
 - No external dependencies, quite small (<2.4KB minified and gzipped)
 - Understands Content-Type (decodes JSON responses by default)
-- [TypeScript support](#usage-with-typescript)
+- TypeScript support
+- Bring your own Promise-implementation
 - [Works on modern browsers and some older ones](#browser-support)
 - [Fully tested](/test/specs) (see e.g. [requests.spec.js](/test/specs/requests.spec.js)) in real browsers, thanks to Sauce Labs
 
@@ -23,10 +24,9 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Usage with TypeScript](#usage-with-typescript)
-- [API](#api)
-- [Inspect request config](#inspect-request-config)
+  - [Usage with TypeScript](#usage-with-typescript)
 - [Extending (instances)](#extending-instances)
+- [API](#api)
 - [Development](#development)
 - [Browser support](#browser-support)
 - [Changelog](#changelog)
@@ -39,7 +39,7 @@ Why not use fetch, axios, jQuery, etc..? See [COMPARISON.md](COMPARISON.md).
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/yea@1.1.0/build/yea.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/yea@1.5.0/build/yea.min.js"></script>
 <script>
   yea.get('https://reqres.in/api/users').then(response => {
     console.log(response.status);
@@ -77,557 +77,36 @@ See these basic examples or [the full API below](#api).
 ```js
 // Make a GET request
 request
-  .get('https://example.com')
+  .baseUrl('https://example.com/api')
+  .headers({
+    'X-API-KEY': 'secret123'
+  })
+  .get('/accounts/:accountId/info')
+  .urlParams({ accountId: 123 })
   .query({ foo: 'bar' })
+  .timeout(2000)
   .then(response => {
+    console.log(response.status);
     console.log(response.body);
   })
   .catch(error => {
     console.error(error.response.status);
   })
 
-// ... with URL parameters
-request
-  .get('https://example.com/api/accounts/:accountId/info')
-  .urlParams({ accountId: 123 })
-
-// Make a POST request
-request
-  .post('https://example.com/accounts')
-  .body('raw data')
-
-// Make a POST request (json)
-request
-  .post('https://example.com/accounts')
-  .json({ foo: 'bar' })
-
-// Make a POST request (urlencoded)
-request
-  .post('https://example.com/accounts')
-  .urlencoded({ foo: 'bar' })
-
-// Set a base URL
-request
-  .baseUrl('https://example.com')
-  .get('/accounts')
-
-// Set headers
-request
-  .get('https://example.com')
-  .headers({
-    'X-Random': 1
-  })
-  .header('x-another', 'test')
-  .unsetHeader('x-another')
-
-// Set a timeout
-request
-  .get('https://example.com')
-  .timeout(2000)
-
-// JSON responses decoded automatically based on Content-Type header (can be turned off)
-request
-  .get('https://example.com/accounts.json')
-  .then(response => {
-    console.log(response.data);
-  })
-
-// Bring your own Promise
-request
-  .polyfills({ Promise: require('bluebird') })
-  .get('https://example.com')
-
-// You can use async/await of course
-const { status, body } = await request.get('http://example.com')
+// POST requests
+request.post('https://example.com/accounts').body('raw data')
+request.post('https://example.com/accounts').json({ foo: 'bar' })
+request.post('https://example.com/accounts').urlencoded({ foo: 'bar' })
 
 // Helper method to return a nested value from the request
-const status = await request.get('https://example.com/accounts.json').prop('status')
-const contentType = await request.get('https://example.com/accounts.json').prop(['headers', 'content-type'])
-const data = await request.get('https://example.com/accounts.json').prop('data')
-const account = await request.get('https://example.com/accounts.json').prop('data.accounts[0]')
+// JSON response is decoded automatically based on Content-Type (configurable)
+const account = await request.get('/accounts.json').prop('data.accounts[0]')
 ```
 
 
-## Usage with TypeScript
+### Usage with TypeScript
 
-Yea comes with built-in type declarations.
-
-```ts
-import yea, { YeaRequestError } from 'yea';
-request.get('https://example.com').then(response => {
-  // Response is implicitly an instance of YeaResponse
-  console.log(response.body);
-}).catch((error: YeaRequestError) => {
-  console.error(error.response.status);
-});
-```
-
-
-## API
-
-The following methods are available.
-
-- [.get(url)](#get)
-- [.post(url)](#post)
-- [.method(method)](#method)
-- [.url(url)](#url)
-- [.urlParams(object)](#urlparams)
-- [.baseUrl(url)](#baseurl)
-- [.query(object | string)](#query)
-- [.headers(object)](#headers)
-- [.amendHeaders(object)](#amendheaders)
-- [.header(key, value)](#header)
-- [.unsetHeader(name)](#unsetheader)
-- [.body(data)](#body)
-- [.json(value)](#json)
-- [.urlencoded(value)](#urlencoded)
-- [.timeout(milliseconds)](#timeout)
-- [.unsetTimeout()](#unsettimeout)
-- [.prop(path)](#prop)
-- [.send([body])](#send)
-- [.sendUrlencoded(data)](#sendurlencoded)
-- [.sendJson(data)](#sendjson)
-- [.setResponseTransformers([])](#setresponsetransformers)
-- [.setAllowedStatusCode(allowed)](#setallowedstatuscode)
-- [.polyfills(polyfills)](#polyfills)
-- [.then()](#then)
-- [.toObject() / .config() / .debug()](#toobject)
-
-### get
-
-```js
-.get(url)
-```
-
-Where `url` is a string. Shorthand for `request.method('get').url(url)`.
-
-### post
-
-```js
-.post(url)
-```
-
-Where `url` is a string. Shorthand for `request.method('post').url(url)`.
-
-### put
-
-```js
-.put(url)
-```
-
-Where `url` is a string. Shorthand for `request.method('put').url(url)`.
-
-### delete
-
-```js
-.delete(url)
-```
-
-Where `url` is a string. Shorthand for `request.method('delete').url(url)`.
-
-### method
-
-Sets the HTTP method.
-
-```js
-.method(method)
-```
-
-Where `method` is a string, e.g. `'get'` or `'GET'`.
-
-### url
-
-Sets the full URL of the request. If a query-string is present, it will override any previously set query parameters.
-
-```js
-.url(url)
-```
-
-Where `url` is a string, e.g. `'https://example.com/accounts'`.
-
-### urlParams
-
-Sets URL parameters which will be replaced from the URL when the request is sent.
-
-```js
-.urlParams(object)
-```
-
-Where `object` is an object.
-
-Example:
-
-```js
-// Will make request to "/api/accounts/123/info"
-request.get('/api/accounts/:accountId/info').urlParams({ accountId: 123 })
-```
-
-### baseUrl
-
-Sets the base URL to which all subsequent request URLs will be appended.
-
-```js
-.baseUrl(url)
-```
-
-Where `url` is a string, e.g. `'https://example.com'`.
-
-A few examples of practical usage:
-
-```js
-request.baseUrl('https://example.com').url('accounts')    // => https://example.com/accounts
-request.baseUrl('https://example.com').url('/accounts')   // => https://example.com/accounts
-request.baseUrl('https://example.com/nested').url('/accounts')     // => https://example.com/nested/accounts
-request.baseUrl('https://example.com/nested/foo').url('accounts')  // => https://example.com/nested/foo/accounts
-```
-
-### query
-
-Sets query parameters from an object or a string. Overwrites existing query.
-
-```js
-.query(object | string)
-```
-
-Where `object` is key-value object of query parameters to set, or a valid query string.
-
-Example:
-
-```js
-request.query({ first: 'foo', second: 'bar' })
-request.query('first=foo&second=bar')
-```
-
-### headers
-
-Sets request headers from an object. Overwrites existing headers.
-
-```js
-.headers(object)
-```
-
-Where `object` is key-value object of headers to set.
-
-Example:
-
-```js
-const req = request.headers({ 'x-example': 'foo' });
-console.log(req.toObject().headers) // => { 'x-example': 'foo' }
-// Overwrites all previous headers:
-const req2 = req.headers({ 'x-token': 'secret123' });
-console.log(req2.toObject().headers) // => { 'x-token': 'secret123' }
-```
-
-### amendHeaders
-
-Sets request headers from an object. Only overwrites headers present in the given object.
-
-```js
-.amendHeaders(object)
-```
-
-Where `object` is key-value object of headers to set.
-
-Example:
-
-```js
-const req = request.headers({ 'x-example': 'foo' }).amendHeaders({ 'x-token': 'secret123' });
-console.log(req.toObject().headers) // => { 'x-example': 'foo', 'x-token': 'secret123' }
-```
-
-### header
-
-Adds or updates a header value.
-
-```js
-.header(key, value)
-```
-
-Where `key` is a string and `value` is a string.
-
-Example:
-
-```js
-const req = request.header('x-example', 'foo').header('x-token', 'secret123');
-console.log(req.toObject().headers) // => { 'x-example': 'foo', 'x-token': 'secret123' }
-```
-
-### unsetHeader
-
-Removes a header from the request.
-
-```js
-.unsetHeader(name)
-```
-
-Where `name` is a string.
-
-Example:
-
-```js
-const req = request.headers({ 'x-example': 'foo', 'x-token': 'secret123' }).unsetHeader('x-example');
-console.log(req.toObject().headers) // => { 'x-token': 'secret123' }
-```
-
-### body
-
-Set the raw body of the request.
-
-```js
-.body(data)
-```
-
-Where `data` is a string.
-
-See also [`json`](#json) and [`urlencoded`](#urlencoded).
-
-### json
-
-Sets a JSON-encoded body and sets the `Content-Type` header to `'application/json'`.
-
-```js
-.json(value)
-```
-
-Where `value` is mixed.
-
-Shorthand for `request.header('Content-Type', 'application/json').body(JSON.stringify(value))`.
-
-### urlencoded
-
-Sets a URL-encoded body and sets the `Content-Type` header to `'application/urlencoded'`.
-
-```js
-.urlencoded(data)
-```
-
-Where `value` is an object.
-
-Shorthand for `request.header('content-type', 'application/x-www-form-urlencoded').body(_valueUrlEncoded_)`.
-
-### timeout
-
-Sets a timeout after which the request will be aborted and the Promise rejected.
-
-```js
-.timeout(milliseconds)
-```
-
-Where `milliseconds` is an integer.
-
-See also [`unsetTimeout`](#unsetTimeout).
-
-### unsetTimeout
-
-Removes the timeout-value previously set with [`timeout`](#timeout).
-
-```js
-.unsetTimeout()
-```
-
-### prop
-
-Sets a path (similar to [`lodash.get`](https://lodash.com/docs/4.17.15#get)) which will be resolved once the response is returned.
-
-```js
-.prop(path)
-```
-
-Where `path` is a string or an array.
-
-Example:
-
-```js
-const account = await request.get('...').prop('data.accounts[0]');
-const contentType = await request.get('...').prop(['headers', 'content-type']);
-```
-
-### send
-
-Dispatches the request and returns a `Promise`.
-
-```js
-.send([body])
-```
-
-Where the optional argument `body` is a string. If it is set, it will be set as the request body. Also see [`sendJson`](#sendjson) and [`sendUrlencoded`](#sendurlencoded).
-
-The Promise resolves with a `response` object.
-
-```js
-request
-  .get('https://example.com')
-  .then(response => {
-    console.log(response.headers); // object
-    console.log(response.body); // string
-    console.log(response.status); // integer
-  })
-  .catch(error => {
-    console.log(error.message);
-    console.log(error.response); // Similar structure as successful response
-  })
-```
-
-A new `Promise` is always returned, and the `YeaAjaxRequest` is not mutated, so you can send the same request multiple times.
-
-```js
-const req = request.get('https://example.com');
-req.send().then(response => {
-  console.log('first response', response);
-});
-req.send().then(() => {
-  console.log('second response', response);
-});
-```
-
-See [`polyfills`](#polyfills) for switching away from global `Promise` (e.g. bluebird).
-
-Note that calling `.send()` is not always necessary. You can usually directly call [`.then()`](#then).
-
-### sendUrlencoded
-
-Shorthand for `.urlencoded(data).send()`.
-
-```js
-.sendUrlencoded(data)
-```
-
-### sendJson
-
-Shorthand for `.json(data).send()`.
-
-```js
-.sendJson(data)
-```
-
-### setResponseTransformers
-
-Sets a list of response transformers which are called when a response is received. By default the list contains one transformer which decodes JSON bodies based on the response `Content-Type` header.
-
-Using this method you can remove the default transformer:
-
-```js
-.setResponseTransformers([])
-```
-
-If you need to add it back, just set it again:
-
-```js
-request.setResponseTransformers([ request.jsonResponseTransformer ]);
-```
-
-Transformer functions are executed sequentially in the order they are in the list, and they receive `response` as the only parameter. Whatever value they return is passed onto the next transformer and eventually back to the Promise-chain.
-
-```js
-request.setResponseTransformers([
-  response => {
-    response.foobar = 'some extra information from elsewhere, for example';
-    return response;
-  }
-]);
-```
-
-Reference to the original array is lost:
-
-```js
-const array = [];
-const req = request.setResponseTransformers(array);
-array.push(someFunction);
-req.toObject().responseTransformers; // not affected by the push, still []
-```
-
-### setAllowedStatusCode
-
-By default any 2XX status code resolves the Promise and other status codes will reject it. This can be customized using `setAllowedStatusCode`.
-
-```js
-.setAllowedStatusCode(allowed)
-```
-
-Where `allowed` is an integer, a `RegExp` or a function.
-
-### polyfills
-
-Override global dependencies which are used internally. Most useful for adding polyfills or a custom Promise-implementation.
-
-```js
-.polyfills(polyfills)
-```
-
-Where `polyfills` is an object. See example for the possible dependencies you can override:
-
-```js
-request.polyfills({
-  Promise: window.Promise
-})
-```
-
-Links to polyfills for older browsers if you need to support them (these can automatically patch `window.Promise`; no need to use `request.polyfills`):
-
-- [es6-promise](https://github.com/stefanpenner/es6-promise)
-
-### then
-
-Sends the request and resolves like a normal Promise.
-
-```js
-.then(arguments)
-```
-
-Where arguments are what you would submit to a then-handler of a Promise.
-
-The following examples are basically equivalent:
-
-```js
-const responseHandler = response => { /* ... */ };
-
-// using .then()
-yea.get('http://example.com').then(responseHandler)
-
-// using .send()
-yea.get('http://example.com').send().then(responseHandler)
-```
-
-### toObject
-
-Returns the request configuration as an object.
-
-```js
-.toObject()
-.config() // alias
-.debug() // alias
-```
-
-Example:
-
-```js
-const req = request.baseUrl('http://example.com').get('/info').header('X-Random', 'foo')
-const config = req.toObject(); // or req.config() or req.debug()
-// =>
-// {
-//   method: 'GET',
-//   url: 'http://example.com/info',
-//   body: '',
-//   headers: {
-//     'x-random': 'foo'
-//   },
-//   allowedStatusCode: /^2[0-9]{2}$/,
-//   timeout: null,
-//   responseTransformers: [
-//     req.jsonResponseTransformer
-//   ],
-// }
-```
-
-
-## Inspect request config
-
-Use the API methods [`toObject`, `config` or `debug`](#toobject) to inspect the configuration of an `YeaAjaxRequest` instance.
-
-```js
-const req = request.get('https://example.com');
-console.log(req.toObject().url);
-```
+Yea comes with built-in type declarations. See [`index.d.ts`](index.d.ts).
 
 
 ## Extending (instances)
@@ -649,26 +128,50 @@ console.log(req1.toObject().query); // => 'foo=bar'
 console.log(req2.toObject().query); // => 'something=different'
 ```
 
+### Example
+
 Practical example of how to create a base request with some defaults and later utilize it for requests:
 
 ```js
+// API-specific defaults for all requests
 const api = request
   .baseUrl('https://example.com/api/v1')
   .headers({
     'X-API-KEY': 'secret123'
   });
 
-// The following requests will use the base URL and headers set above
-api.get('/accounts').send();
-api.post('/accounts').body(data).send();
+// Extend to endpoints
+const accountEndpoint = api.url('/accounts/:accountId');
+const invoiceEndpoint = api.url('/invoices/:invoiceId');
+
+// Usage
+const { data } = await accountEndpoint.urlParams({ accountId: 123 });
+await invoiceEndpoint.method('post').urlParams({ invoiceId: 9000 }).sendJson({ ... });
 ```
+
+
+## API
+
+The following methods are available.
+
+- [`.get(url)`](API.md#get) [`.post(url)`](API.md#post) [`.put(url)`](API.md#put) [`.delete(url)`](API.md#delete) [`.method(method)`](API.md#method)
+- [`.url(url)`](API.md#url) [`.urlParams(object)`](API.md#urlparams) [`.baseUrl(url)`](API.md#baseurl) [`.query(object | string)`](API.md#query)
+- [`.headers(object)`](API.md#headers) [`.amendHeaders(object)`](API.md#amendheaders) [`.header(key, value)`](API.md#header) [`.unsetHeader(name)`](API.md#unsetheader)
+- [`.body(data)`](API.md#body) [`.json(value)`](API.md#json) [`.urlencoded(value)`](API.md#urlencoded)
+- [`.timeout(milliseconds)`](API.md#timeout) [`.unsetTimeout()`](API.md#unsettimeout)
+- [`.prop(path)`](API.md#prop)
+- [`.send([body])`](API.md#send) [`.sendUrlencoded(data)`](API.md#sendurlencoded) [`.sendJson(data)`](API.md#sendjson) [`.then()`](API.md#then)
+- [`.setResponseTransformers([])`](API.md#setresponsetransformers) [`.setAllowedStatusCode(allowed)`](API.md#setallowedstatuscode) [`.polyfills(polyfills)`](API.md#polyfills)
+- [`.toObject()` / `.config()` / `.debug()`](API.md#toobject)
+
+See [API.md](API.md).
 
 
 ## Development
 
 ### Tests
 
-For local development, run `yarn dev`. It starts a web server and watches for changes. You can view the tests in the browser at [http://localhost:9876](http://localhost:9876).
+For local development, run `yarn dev`. It starts a web server with a Mocha UI and watches for changes. You can view the UI in the browser at [http://localhost:9876](http://localhost:9876).
 
 ```bash
 $ yarn dev
@@ -681,6 +184,10 @@ For a one-time full test suite execution, run `yarn test`. It runs all tests in 
 ```bash
 yarn test
 ```
+
+### Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 
 ## Browser support

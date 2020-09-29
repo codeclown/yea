@@ -37,4 +37,7 @@ Publish on npm:
 yarn publish
 ```
 
-Remember to update CHANGELOG.md.
+Remember to update:
+
+- CHANGELOG.md
+- Version in README: `https://cdn.jsdelivr.net/npm/yea@X.X.X/build/yea.min.js`
