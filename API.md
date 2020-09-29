@@ -11,6 +11,8 @@ The following methods are available.
 - [`.send([body])`](#send) [`.sendUrlencoded(data)`](#sendurlencoded) [`.sendJson(data)`](#sendjson) [`.then()`](#then)
 - [`.setResponseTransformers([])`](#setresponsetransformers) [`.setAllowedStatusCode(allowed)`](#setallowedstatuscode) [`.polyfills(polyfills)`](#polyfills)
 - [`.toObject()` / `.config()` / `.debug()`](#toobject)
+- [`YeaResponse`](#yearesponse)
+- [`YeaRequestError`](#yearequesterror)
 
 ## get
 
@@ -436,4 +438,58 @@ const config = req.toObject(); // or req.config() or req.debug()
 //     req.jsonResponseTransformer
 //   ],
 // }
+```
+
+## YeaResponse
+
+Responses have the following format:
+
+```js
+{
+  headers: {
+    'content-type': 'text/html',
+    ...
+  },
+  body: 'raw body text',
+  status: 200
+}
+```
+
+By default JSON responses are decoded (see [`.setResponseTransformers([])`](#setresponsetransformers)), in which case there is an extra property:
+
+```js
+{
+  headers: {
+    'content-type': 'application/json',
+    ...
+  },
+  body: '{"foo":"bar"}',
+  status: 200
+  data: {
+    foo: 'bar'
+  }
+}
+```
+
+## YeaRequestError
+
+If a request fails, the Promise is rejected with an error which includes an extra `response` property:
+
+```js
+{
+  message: 'Request failed with status 500',
+  stack: '...',
+  // ...
+  response: {
+    headers: { ... },
+    status: 500,
+    body: '...'
+  }
+}
+```
+
+Note that yea throws regular synchronous errors if a request config is invalid, e.g.
+
+```js
+throw new Error('Invalid header value for header \'' + name + '\'');
 ```

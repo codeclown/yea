@@ -90,7 +90,11 @@ request
     console.log(response.body);
   })
   .catch(error => {
-    console.error(error.response.status);
+    if (error.response) {
+      console.error(error.response.status);
+    } else {
+      // ...
+    }
   })
 
 // POST requests
